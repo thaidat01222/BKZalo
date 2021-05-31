@@ -1,5 +1,5 @@
 import React from 'react';
-import './chat-ui.css';
+import './chat-ui.scss';
 
 export default class ChatUI extends React.Component {
     constructor(props) {
@@ -112,7 +112,7 @@ export default class ChatUI extends React.Component {
                                 <img src='./sticker.svg' />
                             </button>
                         </div>
-                        <input type="text" className="chat-box-input" />
+                        <input type="text" className="chat-box-input" placeholder="Typing messenger"/>
                         <button className="btn-chat-box btn-send">
                             <img src='./send.svg' />
                         </button>
