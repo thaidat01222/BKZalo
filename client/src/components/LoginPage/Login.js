@@ -1,11 +1,73 @@
 import React from 'react';
 import './login.scss';
+import axios from 'axios';
 
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
+        this.handleEmailChanges = this.handleEmailChanges.bind(this);
+        this.handlePasswordChanges = this.handlePasswordChanges.bind(this);
+        this.handleUsernameChanges = this.handleUsernameChanges.bind(this);
+        this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
+        this.handleSubmitSignup = this.handleSubmitSignup.bind(this);        
         this.state = {
+                
+                    email: '',
+                    password:'',
+                    username:''
+                
         }
+    }
+
+    handleEmailChanges(e){
+        this.setState({ email: e.target.value })
+    }
+    
+    handlePasswordChanges(e){
+        this.setState({ password: e.target.value })
+    }
+    
+    handleUsernameChanges(e){
+        this.setState({ username: e.target.value })
+    }
+
+    handleSubmitLogin(e){
+        e.preventDefault();
+        const account_login = {
+            email: this.state.email,
+            password: this.state.password
+        }
+        console.log(account_login);
+        console.log("Client: Data Sent: " + JSON.stringify(account_login));
+        axios.post("http://localhost:8000/login", account_login, )
+        .then(response => {
+            if (response.status == 200) {
+                console.log("Client: Da Login");
+                console.log(response.data);
+                this.setState({ redirect: true });
+            }
+            if(response.status== 401){
+                alert("Client: Sai thong tin");
+            }
+            // console.log(response);
+            // if (response.status == 401) {
+            //     alert("Sai Thong Tin Tai Khoan");
+            //     console.log("sai thong tin");
+            // }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    handleSubmitSignup(e){
+        e.preventDefault();
+        const account_signup = {
+            username : this.state.user.username,
+            email: this.state.user.email,
+            password: this.state.user.password
+        }
+        console.log("data sent: " + JSON.stringify(account_signup));
     }
 
     onSignIn = () => {
@@ -21,25 +83,36 @@ export default class Login extends React.Component {
     }
 
     render() {
+        //         const signUpButton = document.getElementById('signUp');
+        // const signInButton = document.getElementById('signIn');
+        // const container = document.getElementById('container');
+
+        // signUpButton.addEventListener('click', () => {
+        // 	container.classList.add("right-panel-active");
+        // });
+
+        // signInButton.addEventListener('click', () => {
+        // 	container.classList.remove("right-panel-active");
+        // });
         return (
             <div className="login-page">
                 <div class="container" id="container">
                     <div class="form-container sign-up-container">
                         <form action="#">
                             <h1>Create Account</h1>
-                            <input type="text" placeholder="Name" />
-                            <input type="email" placeholder="Email" />
-                            <input type="password" placeholder="Password" />
-                            <button>Submit</button>
+                            <input type="text" onChange={this.handleUsernameChanges} placeholder="Name" />
+                            <input type="email" onChange={this.handleEmailChanges} placeholder="Email" />
+                            <input type="password" onChange={this.handlePasswordChanges} placeholder="Password" />
+                            <button type="submit" onClick={this.handleSubmitSignup}>Submit</button>
                         </form>
                     </div>
                     <div class="form-container sign-in-container">
                         <form action="#">
                             <h1>Sign in</h1>
-                            <input type="email" placeholder="Email" />
-                            <input type="password" placeholder="Password" />
+                            <input type="email" onChange={this.handleEmailChanges} placeholder="Email" />
+                            <input type="password" onChange={this.handlePasswordChanges} placeholder="Password" />
                             <a href="#">Forgot your password?</a>
-                            <button >Submit</button>
+                            <button type="submit" onClick={this.handleSubmitLogin}>Submit</button>
                         </form>
                     </div>
                     <div class="overlay-container">
