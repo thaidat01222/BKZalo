@@ -1,0 +1,45 @@
+<html>
+
+<head>
+
+<title>Demo Socketio - Homepage</title>
+
+<script
+
+            src="https://code.jquery.com/jquery-1.12.4.min.js"
+
+            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+
+            crossorigin="anonymous"></script>
+
+            <script src= integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ==" crossorigin="anonymous"></script>
+
+<script>
+
+var socket = io("http://localhost:3000");
+
+$(document).ready(function() {
+
+$("#send").click(function() {
+
+socket.emit("Client-sent-data", "Hello world");
+
+});
+
+});
+
+</script>
+
+</head>
+
+<body>
+
+<div>
+
+<button id="send">Send</button>
+
+</div>
+
+</body>
+
+</html>
