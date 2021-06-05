@@ -1,0 +1,44 @@
+.user-profile {
+  width: 80%;
+  margin: 0 auto;
+  background-color: white;
+
+  .header-form {
+    display: flex;
+    justify-content: space-between;
+
+    img {
+      width: 25px;
+    }
+
+
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+
+
+
+    .header-content {
+      height: 50px;
+
+      display: flex;
+      align-items: center;
+
+      .avt-area {
+        width: 40px;
+        margin: 10px 20px 10px 20px;
+      }
+
+      .name-area {
+
+      }
+
+      .profile-acc {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}

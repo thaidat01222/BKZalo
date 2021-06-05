@@ -1,6 +1,6 @@
 .ChatUI {
     min-width: 500px;
-    height: calc(100vh - 62px);
+    height: calc(100vh - 52px);
     min-height: 500px;
     margin: 0 auto;
 
@@ -69,7 +69,15 @@
                 border-radius: 10px;
             }
             
+            .chat-search-form:focus {
+                outline: none;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            
+                background-color: rgba(217, 238, 255, 0.897);
+            }
+
             .chat-search img {
+                cursor: pointer;
                 width: 20px;
                 height: 20px;
                 background-color: none;
@@ -301,6 +309,12 @@
                     width: 18px;
                     padding: 0 5px;
                 }
+            }
+
+            .set-c:hover {
+                cursor: pointer;
+                background-color: rgb(207, 207, 207);
+                border-radius: 7px;
             }
         }
         
