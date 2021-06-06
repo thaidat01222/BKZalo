@@ -1,6 +1,7 @@
 import './App.css';
 import React, {Component} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
 
 import NavBar from './components/header/NavBar';
 import ChatUI from './components/ChatPage/ChatUI';
