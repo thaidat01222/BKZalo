@@ -73,23 +73,24 @@ app.post('/login', function (req, res) {
 
 
 app.post('/signup', function (req, res) {
-  console.log('System: da nhan sign up');
+  console.log('System: Da nhan sign up');
   var username = req.body.username;
   var email = req.body.email;
   var password = req.body.password;
 
   console.log(username + " " + email + " " + password);
 
-  var sql_check = "Select username from `user`";
-  var sql_insert = `INSERT INTO user(username,pasword, email) VALUES ("${username}","${password}","${email}")`;
+  var sql_check = "Select email from `users`";
+  var sql_insert = `INSERT INTO users(username, password, email) VALUES ("${username}","${password}","${email}")`;
   db.query(sql_check, (err, results) => {
       if (err) { throw err; }
+      console.log(results);
       var check = true;
       for (i = 0; i < results.length; i++) {
-          if ((username == results[i].username)) {
+          if ((email == results[i].email)) {
               console.log(results[i])
               check = false;
-              res.status(401).send("System: Tai khoan da ton tai");
+              res.status(401).send("System: Email da ton tai");
           }
       }
       if (check) {
