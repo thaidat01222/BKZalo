@@ -1,6 +1,7 @@
 import React from 'react';
 import './login.scss';
 import axios from 'axios';
+import socketIOClient from 'socket.io-client';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -13,8 +14,10 @@ export default class Login extends React.Component {
         this.state = {
             email: '',
             password: '',
-            username: ''
+            username: '',
+            endpoint: 'http://localhost:8000/'
         }
+
     }
 
     handleEmailChanges(e) {
