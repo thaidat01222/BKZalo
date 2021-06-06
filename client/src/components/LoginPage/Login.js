@@ -65,8 +65,7 @@ export default class Login extends React.Component {
         this.state = {                
             email: '',
             password:'',
-            username:'' ,
-            endpoint: 'http://localhost:8000/'           
+            username:'' 
         }      
    
     }
