@@ -9,29 +9,27 @@ export default class Login extends React.Component {
         this.handlePasswordChanges = this.handlePasswordChanges.bind(this);
         this.handleUsernameChanges = this.handleUsernameChanges.bind(this);
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
-        this.handleSubmitSignup = this.handleSubmitSignup.bind(this);        
+        this.handleSubmitSignup = this.handleSubmitSignup.bind(this);
         this.state = {
-                
-                    email: '',
-                    password:'',
-                    username:''
-                
+            email: '',
+            password: '',
+            username: ''
         }
     }
 
-    handleEmailChanges(e){
+    handleEmailChanges(e) {
         this.setState({ email: e.target.value })
     }
-    
-    handlePasswordChanges(e){
+
+    handlePasswordChanges(e) {
         this.setState({ password: e.target.value })
     }
-    
-    handleUsernameChanges(e){
+
+    handleUsernameChanges(e) {
         this.setState({ username: e.target.value })
     }
 
-    handleSubmitLogin(e){
+    handleSubmitLogin(e) {
         e.preventDefault();
         const account_login = {
             email: this.state.email,
@@ -39,35 +37,50 @@ export default class Login extends React.Component {
         }
         console.log(account_login);
         console.log("Client: Data Sent: " + JSON.stringify(account_login));
-        axios.post("http://localhost:8000/login", account_login, )
-        .then(response => {
-            if (response.status == 200) {
-                console.log("Client: Da Login");
-                console.log(response.data);
-                this.setState({ redirect: true });
-            }
-            if(response.status== 401){
-                alert("Client: Sai thong tin");
-            }
-            // console.log(response);
-            // if (response.status == 401) {
-            //     alert("Sai Thong Tin Tai Khoan");
-            //     console.log("sai thong tin");
-            // }
-        })
-        .catch(error => {
-            console.log(error);
-        });
+        axios.post("http://localhost:8000/login", account_login,)
+            .then(response => {
+                if (response.status == 200) {
+                    console.log("Client: Da Login");
+                    console.log(response.data);
+                    this.setState({ redirect: true });
+                }
+                if (response.status == 401) {
+                    alert("Client: Sai thong tin");
+                }
+                // console.log(response);
+                // if (response.status == 401) {
+                //     alert("Sai Thong Tin Tai Khoan");
+                //     console.log("sai thong tin");
+                // }
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
-    handleSubmitSignup(e){
+    handleSubmitSignup(e) {
         e.preventDefault();
         const account_signup = {
-            username : this.state.user.username,
-            email: this.state.user.email,
-            password: this.state.user.password
+            username: this.state.username,
+            email: this.state.email,
+            password: this.state.password
         }
-        console.log("data sent: " + JSON.stringify(account_signup));
+        console.log("Client: Data Sent: " + JSON.stringify(account_signup));
+        axios.post('http://localhost:8000/signup', account_signup)
+            .then(response => {
+                if (response.status == 401) {
+                    alert("Client: Tai khoan da ton tai");
+                    console.log("Client: Tai khoan da ton tai");
+                }
+                if (response.status == 200) {
+                    alert("Client: Da dang ky thanh cong");
+                    console.log(response);
+                    this.setState({ redirect: true });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     onSignIn = () => {
