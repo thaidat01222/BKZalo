@@ -6,6 +6,7 @@ import {socket} from '../header/NavBar'
 import List from './List'
 import Content from './Content';
 import Profile from './Profile';
+import User from './User';
 
 export default class ChatUI extends React.Component {
     constructor(props) {
@@ -90,6 +91,7 @@ render() {
                 list={this.state.list} />
             <Content />
             <Profile />
+            <User/>
         </div>
     )
 }

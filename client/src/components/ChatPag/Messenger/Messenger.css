@@ -1,0 +1,53 @@
+.messenger {
+  display: grid;
+  width: 100%;
+  height: calc(100vh - 50px);
+  background: #eeeef1;
+
+  grid-template-columns: 350px auto;
+  grid-template-rows: 60px auto 60px;
+  grid-column-gap: 1px;
+  grid-row-gap: 1px;
+}
+
+.container {
+  padding: 10px;
+}
+
+.scrollable {
+  position: relative;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: grey;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: lightgray;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {    
+  background-color: rgb(187, 187, 187);
+
+  border-radius: 5px;
+}
+
+.sidebar {
+  background: white;
+  grid-row-start: 1;
+  grid-row-end: span 3;
+}
+
+.content {
+  background: white;
+  grid-row-start: 1;
+  grid-row-end: span 3;
+}
+
+.footer {
+  grid-column-start: 2;
+  background: white;
+}

@@ -42,16 +42,13 @@ export default class Login extends React.Component {
             if (response.status === 200) {
                 console.log("Client: Da Login");
                 auth = 1;
-                var userInfo = response.data;
-                console.log("Client: User data: "+userInfo[0]);
-                this.setState({redirect : true})
-                
+                this.setState({redirect : true})                
             }
-            if(response.status === 401) {
-                alert("Client: Sai thong tin");
-                auth = 0;
+            // if(response.status === 401) {
+            //     alert("Client: Sai thong tin");
+            //     auth = 0;
                 
-            }
+            // }
         })
         .catch(error => {
             console.log(error);
@@ -101,16 +98,16 @@ export default class Login extends React.Component {
         this.setState({ username: e.target.value })        
     }
 
-    handleSubmitLogin(e){
+    async handleSubmitLogin(e){
         e.preventDefault();
         this.setState({email: this.state.typingE});
         this.setState({password: this.state.typingP})
-        this.checkAuth(this.state.email, this.state.password);
-        cookies.set('user',this.state.email);
-        cookies.set('pass', this.state.password);
+        
+        cookies.set('user',this.state.email, { path: '/' });
+        cookies.set('pass', this.state.password, { path: '/' });
         this.setState({typingE: ''})
         this.setState({typingP: ''});
-        
+        this.checkAuth(this.state.email, this.state.password);
     }
 
 
