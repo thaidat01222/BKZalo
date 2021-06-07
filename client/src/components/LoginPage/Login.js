@@ -60,7 +60,7 @@ export default class Login extends React.Component {
     
     authOK = (data) =>{
         console.log("Client: auth OK")
-        return (<Redirect to='/user' />)
+        return (<Redirect to='/chat' />)
     }
     
     authFail = () =>{
@@ -109,8 +109,6 @@ export default class Login extends React.Component {
         this.setState({typingP: ''});
         this.checkAuth(this.state.email, this.state.password);
     }
-
-
     
     handleSubmitSignup(e){
         e.preventDefault();
@@ -153,9 +151,8 @@ export default class Login extends React.Component {
     render() {
         this.checkAuth(this.state.email, this.state.password);
         console.log("state in render", this.state)
-
         if ( this.state.redirect === true ) {
-            return (<Redirect to='id'/>)
+            return (<Redirect to='/chat'/>)
         } else return (
             <div className="login-page">
                 <div class="container" id="container">

@@ -63,9 +63,21 @@ app.post('/login', function (req, res) {
           if ((email == results[i].email) && (password == results[i].password)) {
               console.log(results[i])
               res.status(200).json(results[i]);
+              var isLogin_sql = `UPDATE users SET isLogin = 1 WHERE id =  ${results[i].id}`;
+              db.query(isLogin_sql,(err)=>{if (err) {throw err;}});
           }
       }
   })
+})
+
+function checkAuth(){
+    
+}
+
+app.post('/logout', (req, res)=>{
+    console.log("System: Log out");
+    var isLogin_sql = `UPDATE users SET isLogin = 0 WHERE id =  ${results[i].id}`;
+    db.query(isLogin_sql, (err)=>{if (err) {throw err;}})
 })
 
 
