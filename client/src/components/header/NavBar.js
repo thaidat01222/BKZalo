@@ -2,15 +2,16 @@ import React from 'react';
 import './navbar.css';
 import socketIOClient from 'socket.io-client';
 
-export default class NavBar extends React.Component {
-    constructor(props) {
-        super(props);
+var socket;
+class NavBar extends React.Component {
+    constructor() {
+        super();
         this.state = {
-            endpoint: 'http://localhost:8000'
-        }   
+            endpoint: 'http://localhost:8000/'
+        };
+        socket = socketIOClient(this.state.endpoint);
     }
-    // socket = socketIOClient(this.state.endpoint);
-    render () {
+    render() {
         return (
             <div className="nav-bar">
                 <div className="nar-bar-left">
@@ -27,3 +28,4 @@ export default class NavBar extends React.Component {
         )
     }
 }
+export default NavBar;

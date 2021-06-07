@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2021 at 06:08 PM
+-- Generation Time: Jun 07, 2021 at 04:30 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 7.0.6
 
@@ -40,7 +40,16 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`username`, `password`, `email`, `avatar`, `fullName`, `phoneNumber`) VALUES
+('admin', 'admin', 'admin@gmail.com', '', 'admin', ''),
+('client', 'client', 'client@gmail.com', '', 'client', ''),
+('duydat1', 'duydat', 'duydat1@gmail.com', '', 'duy dat', ''),
+('duydat2', 'duydat', 'duydat2@gmail.com', '', 'duydat', ''),
+('duydat3', 'duydat', 'duydat3@gmail.com', '', 'duydat', ''),
+('Percy Jackson', 'hihihaha', 'percyusjasson@gmail.com', '', '', ''),
+('phanhien1', 'phanhien', 'phanhien1@gmail.com', '', 'phanhien', ''),
+('phanhien2', 'phanhien', 'phanhien2@gmail.com', '', 'phanhien', ''),
 ('phanhien203', 'hiendangyeu', 'phanhien203@gmail.com', '', 'phan thi thu hien', '0764622582'),
+('phanhien3', 'phanhien', 'phanhien3@gmail.com', '', 'phanhien', ''),
 ('thaidat01222', 'quang123', 'thaidat01222@gmail.com', '', 'thai duy dat', '0762865927');
 
 --

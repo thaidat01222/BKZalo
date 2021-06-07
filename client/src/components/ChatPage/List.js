@@ -1,4 +1,5 @@
 import React from 'react'
+import {socket} from '../header/NavBar'
 
 export default class List extends React.Component {
     constructor(props) {
