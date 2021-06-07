@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import './login.scss';
 import axios from 'axios';
 import socketIOClient from 'socket.io-client';
+import {socket} from '../header/NavBar'
 
 const cookies = new Cookies();
 
@@ -22,7 +23,9 @@ async function checkAuth (user, pass) {
             console.log(response.data);
             // this.setState({ redirect: true });
             auth = 1;
-            authOK();
+            var userInfo = response.data;
+            console.log("Client: User data: "+userInfo[0]);
+            authOK(response.data);
         }
         if(response.status === 401) {
             alert("Client: Sai thong tin");
@@ -43,13 +46,14 @@ async function checkAuth (user, pass) {
     else if (auth === 0) return (false)
 }
 
-function authOK () {
-    console.log("auth OK")
+function authOK (data) {
+    console.log("Client: auth OK")
+    // socket.emit('login', data);
     return (<Redirect to='/user' />)
 }
 
 function authFail () {
-    console.log("auth Fail")
+    console.log("Client: auth Fail")
     return 0;
 }
 
@@ -102,14 +106,15 @@ export default class Login extends React.Component {
 
     handleSubmitLogin(e){
         e.preventDefault();
-        checkAuth(this.state.email, this.state.password)
-        console.log("auth", checkAuth(this.state.email, this.state.password))
+        checkAuth(this.state.email, this.state.password);
+        cookies.set('user',this.state.email);
+        cookies.set('pass', this.state.password);
+        console.log("Client: auth", checkAuth(this.state.email, this.state.password))
     }
 
 
     
     handleSubmitSignup(e){
-
         e.preventDefault();
         const account_signup = {
             username: this.state.username,

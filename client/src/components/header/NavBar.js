@@ -2,7 +2,7 @@ import React from 'react';
 import './navbar.css';
 import socketIOClient from 'socket.io-client';
 var socket;
-export default class NavBar extends React.Component {
+class NavBar extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -27,3 +27,4 @@ export default class NavBar extends React.Component {
         )
     }
 }
+export default NavBar;

@@ -52,9 +52,7 @@ app.post('/login', function (req, res) {
       console.log("length: " + results.length);
       for (i = 0; i < results.length; i++) {
           if ((email != results[i].email) || (password != results[i].password)) {
-              console.log("sai roi");
               count++;
-              console.log(count);
           }
       }
       if (count == results.length) {
@@ -64,7 +62,6 @@ app.post('/login', function (req, res) {
       for (i = 0; i < results.length; i++) {
           if ((email == results[i].email) && (password == results[i].password)) {
               console.log(results[i])
-              var loggedInStatus = "true";
               res.status(200).json(results[i]);
           }
       }
