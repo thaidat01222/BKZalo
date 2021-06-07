@@ -22,8 +22,8 @@ export default class Login extends React.Component {
         this.state = {   
             typingE: '',
             typingP: '',        
-            email: '',
-            password:'',
+            email: cookies.get('user'),
+            password: cookies.get('pass'),
             username:' ',
             redirect: false
         }    
@@ -103,10 +103,8 @@ export default class Login extends React.Component {
         this.setState({email: this.state.typingE});
         this.setState({password: this.state.typingP})
         
-        cookies.set('user',this.state.email, { path: '/' });
-        cookies.set('pass', this.state.password, { path: '/' });
-        this.setState({typingE: ''})
-        this.setState({typingP: ''});
+        cookies.set('user',this.state.typingE, { path: '/' });
+        cookies.set('pass', this.state.typingP, { path: '/' });
         this.checkAuth(this.state.email, this.state.password);
     }
 
@@ -155,7 +153,7 @@ export default class Login extends React.Component {
         console.log("state in render", this.state)
 
         if ( this.state.redirect === true ) {
-            return (<Redirect to='id'/>)
+            return (<Redirect to='chat'/>)
         } else return (
             <div className="login-page">
                 <div class="container" id="container">

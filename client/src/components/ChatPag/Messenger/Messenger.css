@@ -1,7 +1,7 @@
 .messenger {
   display: grid;
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 46px);
   background: #eeeef1;
 
   grid-template-columns: 350px auto;

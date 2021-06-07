@@ -11,3 +11,10 @@ body {
 button {
     cursor: pointer;
 }
+
+.button-logout {
+  background-color: navajowhite;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
