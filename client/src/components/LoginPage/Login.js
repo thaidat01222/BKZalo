@@ -13,13 +13,11 @@ async function checkAuth (user, pass) {
         email: user,
         password: pass
     }
-    console.log(account_login);
-    console.log("Client: Data Sent: " + JSON.stringify(account_login));
+    console.log("account_login" + JSON.stringify(account_login));
     await axios.post("http://localhost:8000/login", account_login, )
     .then(response => {
         if (response.status === 200) {
             console.log("Client: Da Login");
-            console.log(response.data);
             // this.setState({ redirect: true });
             auth = 1;
             authOK();
@@ -71,16 +69,13 @@ export default class Login extends React.Component {
    
     }
 
-    componentDidMount = async () => {
+    componentDidMount = () => {
         console.log("did mount");
         const cookieName = cookies.get('user');
         const cookiePass = cookies.get('pass');
         this.setState ({email: cookieName });
         this.setState ({password: cookiePass });
-
-
-        // const auth=0;
-        console.log('cookie',cookieName, cookiePass)
+        console.log('cookie',this.state.email, this.state.password)
         // checkAuth(cookieName, cookiePass);
         // if (checkAuth(cookieName, cookiePass) == true ) {
         //     console.log("auth ok");
@@ -104,6 +99,8 @@ export default class Login extends React.Component {
     handleSubmitLogin(e){
         e.preventDefault();
         checkAuth(this.state.email, this.state.password)
+        cookies.set('user',this.state.email);
+        cookies.set('pass', this.state.password);
         console.log("auth", checkAuth(this.state.email, this.state.password))
     }
 
@@ -160,16 +157,6 @@ export default class Login extends React.Component {
         // signInButton.addEventListener('click', () => {
         // 	container.classList.remove("right-panel-active");
         // });
-        const cookieName = cookies.get('user');
-        const cookiePass = cookies.get('pass');
-        console.log('cookie2',cookieName, cookiePass)
-        if (checkAuth(cookieName, cookiePass) === true ) {
-            console.log("authhhhh ok")
-            return (
-            <Redirect to='/user'/>
-        )
-    }
-        else console.log("auth fail")
         return (
             <div className="login-page">
                 <div class="container" id="container">

@@ -25,13 +25,13 @@ export default class List extends React.Component {
                     <div className="list-users">
                         {this.state.list.map((key) => {
                             console.log("list user", key)
-                            return (<div></div>
-                                //     <div key="index" className="chats-user">
-                                //         <div className="avt-user">
-                                //             <img src={key.avt} />
-                                //         </div>
-                                //         <div className="user">{key.user}</div>
-                                //     </div>
+                            return (
+                                    <div key="index" className="chats-user">
+                                        <div className="avt-user">
+                                            <img src={key.avt} />
+                                        </div>
+                                        <div className="user">{key.user}</div>
+                                    </div>
                             );
                         })}
                     </div>

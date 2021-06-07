@@ -3,13 +3,13 @@ import './navbar.css';
 import socketIOClient from 'socket.io-client';
 
 export default class NavBar extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             endpoint: 'http://localhost:8000'
         }   
     }
-    socket = socketIOClient(this.state.endpoint);
+    // socket = socketIOClient(this.state.endpoint);
     render () {
         return (
             <div className="nav-bar">
