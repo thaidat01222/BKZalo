@@ -14,7 +14,7 @@ export default class Chat extends React.Component {
       email: cookies.get('user'),
       password: cookies.get('pass'),
       userInfo: {},
-      authOK: false
+      authOK: null
     }
   }
 
@@ -53,6 +53,18 @@ export default class Chat extends React.Component {
     cookies.set('user', '')
     cookies.set('pass', '')
     this.setState({ authOK: false });
+    const account_logout = {
+      email : this.state.email
+    }
+    console.log("LogOut "+JSON.stringify(account_logout))
+    axios.post('http://localhost:8000/logout/', account_logout)
+    .then(response =>{
+      console.log(response.data)
+    })
+
+    .catch(error => {
+      console.log(error);
+  });
   }
 
   render() {

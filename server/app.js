@@ -75,9 +75,18 @@ function checkAuth(){
 }
 
 app.post('/logout', (req, res)=>{
+    var email = req.body.email;
     console.log("System: Log out");
-    var isLogin_sql = `UPDATE users SET isLogin = 0 WHERE id =  ${results[i].id}`;
-    db.query(isLogin_sql, (err)=>{if (err) {throw err;}})
+    var isLogout_sql = `UPDATE users SET isLogin = 0 WHERE email =  ${email}`;
+    console.log(isLogout_sql)
+    db.query(isLogout_sql, (err)=>{
+        if (err) {
+            throw err;
+        }
+        res.send("System: Da Logout")
+    }
+
+    )
 })
 
 
