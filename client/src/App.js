@@ -8,15 +8,18 @@ import NavBar from './components/header/NavBar';
 import Login from './components/LoginPage/Login';
 import UserProfile from './components/UserPage/UserProfile';
 import Chat from './components/ChatPag/ChatPage'
+import ChatUI from './components/ChatTest/ChatUI'
 
 export default class App extends React.Component {
     render () {
         return (
             <BrowserRouter>
                 <Route path='/' component={NavBar} />
-                <Route exact path='/login' component={Login} />
+                <Route exact path='/' component={Login} />
                 <Route exact path='/user' component={UserProfile} />
                 <Route exact path='/chat' component={Chat} />
+                <Route exact path='/id' component={ChatUI} />
+
             </BrowserRouter>
         )
     }
