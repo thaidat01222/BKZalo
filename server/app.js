@@ -64,7 +64,7 @@ app.post('/login', function (req, res) {
           if ((email == results[i].email) && (password == results[i].password)) {
               console.log(results[i])
               res.status(200).json(results[i]);
-              var isLogin_sql = `UPDATE users SET isLogin = 1 WHERE id =  ${results[i].id}`;
+              var isLogin_sql = `UPDATE users SET isLogin = 1 WHERE id =  '${results[i].id}'`;
               db.query(isLogin_sql,(err)=>{if (err) {throw err;}});
           }
       }
@@ -87,7 +87,7 @@ function checkLogin(id){
     })
 }
 
-app.get('/checkLogin', (req, res=>{
+app.get('/checkLogin', (req, res)=>{
     console.log("System: Check Login")
     var id = req.body.id;
     if(checkLogin(id)){
@@ -97,12 +97,12 @@ app.get('/checkLogin', (req, res=>{
         res.status(400).send("Accoutn Chua Dang Nhap");
     }
 
-}))
+})
 
 app.post('/logout', (req, res)=>{
     var email = req.body.email;
     console.log("System: Log out");
-    var isLogout_sql = `UPDATE users SET isLogin = 0 WHERE email =  ${email}`;
+    var isLogout_sql = `UPDATE users SET isLogin = 0 WHERE email =  '${email}'`;
     console.log(isLogout_sql)
     db.query(isLogout_sql, (err)=>{
         if (err) {
@@ -114,6 +114,16 @@ app.post('/logout', (req, res)=>{
     )
 })
 
+app.post('/sendMessage', (req, res)=>{
+    console.log(req);
+    var fromID = req.body.fromID;
+    var toID = req.body.toID;
+    var content = req.body.content;
+    var contentType = req.body.contentType;
+    const sendMessage_sql = `INSERT INTO message(fromID, toID, content, contentType) VALUES ('${fromID}','${toID}','${content}','${contentType}')`;
+    console.log(sendMessage_sql);
+    res.send(sendMessage_sql);
+})
 
 app.post('/signup', function (req, res) {
   console.log('System: Da nhan sign up');
