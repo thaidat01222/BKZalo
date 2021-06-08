@@ -87,7 +87,7 @@ function checkLogin(id){
     })
 }
 
-app.get('/checkLogin', (req, res=>{
+app.get('/checkLogin', (req, res) =>{
     console.log("System: Check Login")
     var id = req.body.id;
     if(checkLogin(id)){
@@ -97,12 +97,12 @@ app.get('/checkLogin', (req, res=>{
         res.status(400).send("Accoutn Chua Dang Nhap");
     }
 
-}))
+})
 
 app.post('/logout', (req, res)=>{
     var email = req.body.email;
     console.log("System: Log out");
-    var isLogout_sql = `UPDATE users SET isLogin = 0 WHERE email =  ${email}`;
+    var isLogout_sql = `UPDATE users SET isLogin = 0 WHERE email =  '${email}' `;
     console.log(isLogout_sql)
     db.query(isLogout_sql, (err)=>{
         if (err) {

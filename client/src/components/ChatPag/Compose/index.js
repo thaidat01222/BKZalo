@@ -1,7 +1,14 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Compose.css';
 
+
+
 export default function Compose(props) {
+  const [messages, setMessages] = useState([])
+
+useEffect(() => {
+ 
+},[])
     return (
       <div className="compose">
         <input
@@ -9,7 +16,7 @@ export default function Compose(props) {
           className="compose-input"
           placeholder="Type a message, @name"
         />
-
+        <button>send</button>
         {
           props.rightItems
         }
