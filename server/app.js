@@ -4,6 +4,7 @@ const io = require('socket.io')(http);
 const mysql = require('mysql');
 const port = process.env.PORT || 8000;
 const bodyParser = require('body-parser');
+const { response } = require('express');
 
 
 app.use(bodyParser.json());
@@ -70,9 +71,33 @@ app.post('/login', function (req, res) {
   })
 })
 
-function checkAuth(){
-    
+function checkLogin(id){
+    var account_login_sql = `SELECT isLogin FROM users WHERE  id = ${id}`;
+    console.log(account_login_sql);
+    db.query(account_login_sql,(err, results)=>{
+        if (err) {
+            throw err;        
+        }
+        if(results == 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    })
 }
+
+app.get('/checkLogin', (req, res=>{
+    console.log("System: Check Login")
+    var id = req.body.id;
+    if(checkLogin(id)){
+        res.status(200).send("Account Da Dang Nhap");
+    }
+    else{
+        res.status(400).send("Accoutn Chua Dang Nhap");
+    }
+
+}))
 
 app.post('/logout', (req, res)=>{
     var email = req.body.email;
