@@ -1,6 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import './Message.css';
+import { Cookies } from 'react-cookie';
+
+const cookies = new Cookies();
 
 export default function Message(props) {
     const {

@@ -3,9 +3,7 @@ import { useCookies, Cookies, CookiesProvider } from 'react-cookie';
 import { Redirect } from 'react-router-dom';
 import './login.scss';
 import axios from 'axios';
-import socketIOClient from 'socket.io-client';
-import { socket } from '../header/NavBar'
- 
+import io from 'socket.io-client';
 const cookies = new Cookies();
 export default class Login extends React.Component {
     constructor(props) {
@@ -15,7 +13,6 @@ export default class Login extends React.Component {
         this.handleUsernameChanges = this.handleUsernameChanges.bind(this);
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
         this.handleSubmitSignup = this.handleSubmitSignup.bind(this);
- 
         this.state = {
             typingE: '',
             typingP: '',
@@ -25,73 +22,103 @@ export default class Login extends React.Component {
             redirect: false,
             button: false
         }
- 
+
     }
- 
-    checkAuth = async (user, pass) => {
+
+    login = async (user, pass) => {
         var auth = 0;
         const account_login = {
             email: user,
             password: pass
         }
         console.log("account_login" + JSON.stringify(account_login));
-        await axios.post("http://localhost:8000/login", account_login,)
+        await axios.post("http://localhost:8000/login", account_login)
             .then(response => {
                 if (response.status === 200) {
-                    console.log("Client: Da Login");
+                    const socket = io('http://localhost:8000'); 
+                    console.log("Client: Da Login Vao Socket");
                     auth = 1;
                     this.setState({ redirect: true })
+                    socket.emit("list-online",this.state.email);
                 }
                 // if(response.status === 401) {
                 //     alert("Client: Sai thong tin");
                 //     auth = 0;
- 
-                // }
             })
             .catch(error => {
                 console.log(error);
             });
     }
- 
+    
+
+    checkAuth = async (user, pass) => {
+        var auth = 0;
+        const account_login = {
+            email: user
+        }
+        console.log("account_login" + JSON.stringify(account_login));
+        await axios.post("http://localhost:8000/checkLogin", account_login,)
+            .then(response => {
+                if (response.status === 200) {
+                    const socket = io('http://localhost:8000'); 
+                    console.log("Client: Da Login Vao Socket");
+                    auth = 1;
+                    this.setState({ redirect: true })
+                    socket.emit("list-online",this.state.email);
+                    socket.on('disconnected', function() {
+
+                        socket.emit('disconnected', this.state.email);
+            
+                    });
+                } else {
+                // if(response.status === 401) {
+                //     alert("Client: Sai thong tin");
+                //     auth = 0;
+                // redirect => về trang login. 
+                }
+                
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
     shouldComponentUpdate(nextState) {
-        console.log("shouldComponentUpdate",(this.state.redirect !== false))
+        console.log("shouldComponentUpdate", (this.state.redirect !== false))
         // if ((nextState.redirect !== this.state.redirect)) return true;
         if ((this.state.button === true) || (this.state.redirect === true)) return true;
         else if ((nextState.typingE !== this.state.typingE) || (nextState.typingP !== this.state.typingP))
             return false;
-        
+
     }
- 
+
     componentDidMount = async () => {
         console.log("did mount");
         this.checkAuth(this.state.email, this.state.password)
         console.log('state', this.state.email, this.state.password)
     }
- 
+
     handleEmailChanges(e) {
         this.setState({ typingE: e.target.value })
         console.log("this.state.email", this.state.typingE)
     }
- 
+
     handlePasswordChanges(e) {
         this.setState({ typingP: e.target.value })
     }
- 
+
     handleUsernameChanges(e) {
         this.setState({ username: e.target.value })
     }
- 
+
     async handleSubmitLogin(e) {
         e.preventDefault();
         this.setState({ email: this.state.typingE });
         this.setState({ password: this.state.typingP })
-        this.setState({ button: true})
- 
+        this.setState({ button: true })
         cookies.set('user', this.state.typingE, { path: '/' });
         cookies.set('pass', this.state.typingP, { path: '/' });
-        this.checkAuth(this.state.typingE, this.state.typingP);
+        this.login(this.state.typingE, this.state.typingP);
     }
- 
     handleSubmitSignup(e) {
         e.preventDefault();
         const account_signup = {
@@ -117,24 +144,24 @@ export default class Login extends React.Component {
             .catch(error => {
                 console.log(error);
             });
- 
+        this.setState({ button: true })
     }
- 
+
     onSignIn = () => {
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
         container.classList.remove("right-panel-active");
     }
- 
+
     onSignUp = () => {
         const signUpButton = document.getElementById('signUp');
         const container = document.getElementById('container');
         container.classList.add("right-panel-active");
     }
- 
- 
+
+
     render() {
-        this.checkAuth(this.state.email, this.state.password);
+       this.checkAuth(this.state.email, this.state.password);
         console.log("state in render", this.state)
         if (this.state.redirect === true) {
             return (<Redirect to='/chat' />)
@@ -174,12 +201,10 @@ export default class Login extends React.Component {
                         </div>
                     </div>
                 </div>
- 
- 
             </div>
- 
+
         )
     }
 }
- 
+
 

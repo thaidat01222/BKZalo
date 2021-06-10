@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './chat-ui.scss';
-import io from 'socket.io-client';
-import {socket} from '../header/NavBar'
-
 import List from './List'
 import Content from './Content';
 import Profile from './Profile';

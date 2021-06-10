@@ -1,5 +1,4 @@
 import React from 'react'
-import {socket} from '../header/NavBar'
 import { useCookies, Cookies, CookiesProvider } from 'react-cookie';
 import axios from 'axios';
 
