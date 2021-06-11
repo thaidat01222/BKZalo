@@ -51,15 +51,15 @@ export default class Compose extends React.Component {
   render() {
     return (
       <div className="compose">
+        <img src='./plus2.svg' />
         <input
           type="text"
           className="compose-input"
-          placeholder="Type a message, @name"
+          placeholder="Aa"
           value={this.state.typing}
           onChange={this.handleTyping}
         />
-        <button onClick={this.handleSend}>send</button>
-
+        <button onClick={this.handleSend}><img src='./send2.svg'/></button>
       </div>
     );
   }

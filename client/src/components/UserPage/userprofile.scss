@@ -1,44 +1,72 @@
-.user-profile {
-  width: 80%;
-  margin: 0 auto;
+.panel {
+  position: relative;
   background-color: white;
-
-  .header-form {
+  width: 30%;
+  min-width: 300px;
+  min-height: 500px;
+  height: calc(100vh - 83px);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  #inside-panel {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100vh - 46px);
+  }
 
-    img {
-      width: 25px;
-    }
+  .space {
+    height: 70px;
+  }
+  img {
+    margin-top: 200px;
+    width: 200px;
+    border-radius: 200px;
+    margin:  0 auto;
+    box-shadow: 0px 0px 5px 5px #adada9;
+  }
 
+  h1 {
+    margin: 0px auto;
+    margin-top: 20px;
+  }
+
+  p{
+    margin: 0 auto;
+    margin-bottom: 70px;
+  }
+
+  ul {
+    display: flex;
+    width: 80%;
+    flex-direction: column;
+    margin: 0 auto;
+  }
+
+  li {
+    display: block;
+    display: flex;
+    padding-top: 10px;
+  }
+
+  b{
+    width: 160px;
 
   }
 
-  .main-content {
-    display: flex;
-    flex-direction: column;
-
-
-
-    .header-content {
-      height: 50px;
-
-      display: flex;
-      align-items: center;
-
-      .avt-area {
-        width: 40px;
-        margin: 10px 20px 10px 20px;
-      }
-
-      .name-area {
-
-      }
-
-      .profile-acc {
-        display: flex;
-        flex-direction: column;
-      }
+  span {
+    width: 200px;
+  }
+  .edit {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    img {
+      width: 25px;
+      border-radius: 0;
+      box-shadow: none;
     }
   }
 }
+

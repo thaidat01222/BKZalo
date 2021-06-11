@@ -134,7 +134,7 @@ export default function MessageList(props) {
         // <ToolbarButton key="audio" icon="ion-ios-mic" />,
         // <ToolbarButton key="money" icon="ion-ios-card" />,
         // <ToolbarButton key="games" icon="ion-logo-game-controller-b" />,
-        <ToolbarButton key="emoji" icon="send2" />
+        <ToolbarButton key="emoji" icon="send2" id="send2"/>
       ]} />
     </div>
   );

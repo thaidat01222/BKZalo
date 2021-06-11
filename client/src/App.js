@@ -7,8 +7,9 @@ import {useCookies} from 'react-cookie';
 import NavBar from './components/header/NavBar';
 import Login from './components/LoginPage/Login';
 import UserProfile from './components/UserPage/UserProfile';
-import Chat from './components/ChatPag/ChatPage'
-import ChatUI from './components/ChatTest/ChatUI'
+import Chat from './components/ChatPag/ChatPage';
+import ChatUI from './components/ChatTest/ChatUI';
+import Footer from './components/Footer/Footer'
 
 export default class App extends React.Component {
     render () {
@@ -19,7 +20,7 @@ export default class App extends React.Component {
                 <Route exact path='/user' component={UserProfile} />
                 <Route exact path='/chat' component={Chat} />
                 <Route exact path='/id' component={ChatUI} />
-
+                <Route exact path={'/', '/user'} component={Footer} />
             </BrowserRouter>
         )
     }
