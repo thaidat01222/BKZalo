@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import axios from 'axios';
 import './Compose.css';
+import { io } from 'socket.io-client';
+// const socket = io('http://localhost:8000');
 
+console.log('start loading page')
 const cookies = new Cookies();
 
 export default class Compose extends React.Component {
@@ -17,6 +20,13 @@ export default class Compose extends React.Component {
   // componentDidUpdate (nextState) {
   //   // if (nextState.typing !== this.state.typing) return false;
   // }
+  // componentDidMount() {
+  //   socket.on('receiveData', res =>{
+  //     console.log(res);
+  //     this.setState({mess: res})
+  //    }) 
+  //    console.log("mess:", this.state.mess)
+  // }
 
   handleTyping = (e) => {
     this.setState({ typing: e.target.value })
@@ -28,12 +38,13 @@ export default class Compose extends React.Component {
     console.log("state", new Date().getTime())
     const message = {
       fromEmail: cookies.get('user'),
-      toEmail: '',
+      toEmail: "b@gmail.com",
       content: this.state.typing,
       contentType: 'text',
       sentTime: ''
     }
-    console.log("Client: message send: "+JSON.stringify(message));
+    // socket.emit("sendData",message);
+    console.log("Client: message send: " + JSON.stringify(message));
     axios.post("http://localhost:8000/sendmessage", message)
       .then(response => {
         if (response.status === 200) {
@@ -59,7 +70,7 @@ export default class Compose extends React.Component {
           value={this.state.typing}
           onChange={this.handleTyping}
         />
-        <button onClick={this.handleSend}><img src='./send2.svg'/></button>
+        <button onClick={this.handleSend}><img src='./send2.svg' /></button>
       </div>
     );
   }

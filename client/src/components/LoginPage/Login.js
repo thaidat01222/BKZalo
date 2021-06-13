@@ -3,7 +3,11 @@ import { useCookies, Cookies, CookiesProvider } from 'react-cookie';
 import { Redirect } from 'react-router-dom';
 import './login.scss';
 import axios from 'axios';
-import io from 'socket.io-client';
+
+// import SocketIOClient from '../socket';
+// const socket = SocketIOClient();
+// import socket from '../socket';
+// const sock = new socket;
 const cookies = new Cookies();
 export default class Login extends React.Component {
     constructor(props) {
@@ -20,7 +24,8 @@ export default class Login extends React.Component {
             password: cookies.get('pass'),
             username: '',
             redirect: false,
-            button: false
+            button: false,
+            isLogin: cookies.get('isLogin')
         }
 
     }
@@ -35,15 +40,19 @@ export default class Login extends React.Component {
         await axios.post("http://localhost:8000/login", account_login)
             .then(response => {
                 if (response.status === 200) {
-                    const socket = io('http://localhost:8000'); 
+                    // const socket = io('http://localhost:8000'); 
                     console.log("Client: Da Login Vao Socket");
                     auth = 1;
                     this.setState({ redirect: true })
-                    socket.emit("list-online",this.state.email);
+                    this.setState({isLogin: true})
+                    cookies.set('isLogin', true , { path: '/' });
+                    // sock.emit("list-online",this.state.email);
                 }
-                // if(response.status === 401) {
-                //     alert("Client: Sai thong tin");
-                //     auth = 0;
+                if(response.status === 401) {
+                    alert("Client: Sai thong tin");
+                    auth = 0;
+                    console.log("401")
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -51,36 +60,13 @@ export default class Login extends React.Component {
     }
     
 
-    checkAuth = async (user, pass) => {
-        var auth = 0;
-        const account_login = {
-            email: user
+    checkAuth = async (islogin) => {
+        console.log('checkAuth')
+        console.log("islogin", (islogin == "true"))
+        if (islogin == "true") {
+            this.setState({redirect: true})
+            console.log("redirec in check auth", this.state.redirect)
         }
-        console.log("account_login" + JSON.stringify(account_login));
-        await axios.post("http://localhost:8000/checkLogin", account_login,)
-            .then(response => {
-                if (response.status === 200) {
-                    const socket = io('http://localhost:8000'); 
-                    console.log("Client: Da Login Vao Socket");
-                    auth = 1;
-                    this.setState({ redirect: true })
-                    socket.emit("list-online",this.state.email);
-                    socket.on('disconnected', function() {
-
-                        socket.emit('disconnected', this.state.email);
-            
-                    });
-                } else {
-                // if(response.status === 401) {
-                //     alert("Client: Sai thong tin");
-                //     auth = 0;
-                // redirect => về trang login. 
-                }
-                
-            })
-            .catch(error => {
-                console.log(error);
-            });
     }
     shouldComponentUpdate(nextState) {
         console.log("shouldComponentUpdate", (this.state.redirect !== false))
@@ -93,7 +79,7 @@ export default class Login extends React.Component {
 
     componentDidMount = async () => {
         console.log("did mount");
-        this.checkAuth(this.state.email, this.state.password)
+        this.checkAuth(this.state.isLogin)
         console.log('state', this.state.email, this.state.password)
     }
 
@@ -139,6 +125,7 @@ export default class Login extends React.Component {
                     this.setState({ redirect: true });
                     cookies.set('user', this.state.typingE, { path: '/' });
                     cookies.set('pass', this.state.typingP, { path: '/' });
+                    cookies.set('isLogin', true , { path: '/' });
                 }
             })
             .catch(error => {
@@ -161,9 +148,9 @@ export default class Login extends React.Component {
 
 
     render() {
-       this.checkAuth(this.state.email, this.state.password);
+       this.checkAuth(this.state.isLogin);
         console.log("state in render", this.state)
-        if (this.state.redirect === true) {
+        if ((this.state.redirect === true) || (this.state.isLogin === "true")) {
             return (<Redirect to='/chat' />)
         } else return (
             <div className="login-page">
@@ -182,7 +169,6 @@ export default class Login extends React.Component {
                             <h1>Sign in</h1>
                             <input type="email" onChange={this.handleEmailChanges} placeholder="Email" />
                             <input type="password" onChange={this.handlePasswordChanges} placeholder="Password" />
-                            <a href="#">Forgot your password?</a>
                             <button type="submit" onClick={this.handleSubmitLogin}>Submit</button>
                         </form>
                     </div>
@@ -206,5 +192,4 @@ export default class Login extends React.Component {
         )
     }
 }
-
 

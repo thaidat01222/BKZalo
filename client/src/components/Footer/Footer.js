@@ -1,8 +1,5 @@
 import React from 'react';
 import './footer.css';
-import socketIOClient from 'socket.io-client';
-
-var socket;
 class Footer extends React.Component {
 
     render() {

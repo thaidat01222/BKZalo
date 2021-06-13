@@ -1,7 +1,17 @@
 import React from 'react';
-import './userprofile.scss'
+import './userprofile.scss';
+import {  Cookies } from 'react-cookie';
+
+
+const cookies = new Cookies();
 
 export default class UserProfile extends React.Component {
+    constructor (props) {
+        super (props);
+        this.state = {
+            user: cookies.get('user')
+        }
+    }
     render() {
         return (
             <div class="panel">

@@ -1,11 +1,13 @@
 .login-page {
-    height: calc(100vh - 46px);
+    height: calc(100vh - 80px);
 
     display: flex;
     align-items: center;
     justify-content: center;
     background: #222D32;
-    font-family: 'Montserrat', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
 .container {
     margin: 0 auto;
 	background-color: #fff;
@@ -15,17 +17,18 @@
 	position: relative;
 	overflow: hidden;
 	width: 70%;
-    height: 70vh;
+    height: 65vh;
 	max-width: 100%;
 	min-height: 300px;
 }
     h1 {
 	font-weight: bold;
-	margin: 0;
+	margin: 0px 0 30px 0;
 }
 
 h2 {
 	text-align: center;
+	margin: 0;
 }
 
 p {
@@ -33,7 +36,7 @@ p {
 	font-weight: 100;
 	line-height: 20px;
 	letter-spacing: 0.5px;
-	margin: 20px 0 30px;
+	margin: 0px 0 30px;
 }
 
 span {
@@ -48,6 +51,7 @@ a {
 }
 
 button {
+	margin-top: 20px;
 	border-radius: 20px;
 	border: 1px solid #FF4B2B;
 	background-color: #FF4B2B;
@@ -58,6 +62,9 @@ button {
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	transition: transform 80ms ease-in;
+	box-shadow: inset 19px 19px 22px #d13e23,
+	inset -19px -19px 22px #ff5933;
+
 }
 
 button:active {
@@ -71,6 +78,7 @@ button:focus {
 button.ghost {
 	background-color: transparent;
 	border-color: #FFFFFF;
+	box-shadow: none;
 }
 
 form {
@@ -88,7 +96,7 @@ input {
 	background-color: #eee;
 	border: none;
 	padding: 12px 15px;
-	margin: 8px 0;
+	margin: 10px 0;
 	width: 80%;
 }
 
@@ -227,3 +235,7 @@ footer a {
 }
 }
 
+
+input:focus {
+	outline: none;
+}
