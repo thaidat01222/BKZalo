@@ -185,16 +185,17 @@ async function userInfoListChat(sql,messageID){
         listUser.email = resultsInfor[0].email;
         listUser.userName = resultsInfor[0].username;
         listUser.avatar = resultsInfor[0].avatar;
-        try{
-            let lastMess = `SELECT content FROM message WHERE messageID = '${messageID}'`;
-            const [resultsLastmess, field] = await db.query(lastMess);
-            console.log('Database: lastMessID :',resultsLastmess);
-            listUser.lastMess = resultsLastmess[0].content;
-        }catch(err){
-            console.log(err)
-        }
+
     } catch (err) {
         console.log(err);
+    }
+    try{
+        let lastMess = `SELECT content FROM message WHERE messageID = '${messageID}'`;
+        const [resultsLastmess, field] = await db.query(lastMess);
+        console.log('Database: lastMessID :',resultsLastmess);
+        listUser.lastMess = resultsLastmess[0].content;
+    }catch(err){
+        console.log(err)
     }
     console.log('System: UserInfo ', listUser);
     return listUser;
@@ -212,13 +213,13 @@ app.post('/listUser', async (req, res) => {
             if (results[i].fromEmail == email) {
                 let userInfo_sql = `SELECT (email),(username),(avatar) FROM users WHERE email = '${results[i].toEmail}'`;
                 console.log('SQL: userInfo from lastChat: ', userInfo_sql);
-                let userInfo = userInfoListChat(userInfo_sql,lastMessID);
+                var userInfo = await userInfoListChat(userInfo_sql,lastMessID);
                 console.log('userInfo',userInfo)
                 listUser[i] = userInfo;
             }else{
                 let userInfo_sql = `SELECT (email),(username),(avatar) FROM users WHERE email = '${results[i].fromEmail}'`;
                 console.log('SQL: userInfo from lastChat: ', userInfo_sql);
-                let userInfo = userInfoListChat(userInfo_sql,lastMessID);
+                let userInfo = await userInfoListChat(userInfo_sql,lastMessID);
                 listUser[i] = userInfo;
             }
         }
