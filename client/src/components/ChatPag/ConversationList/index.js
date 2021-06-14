@@ -1,32 +1,45 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import ConversationSearch from '../ConversationSearch';
 import ConversationListItem from '../ConversationListItem';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import axios from 'axios';
+import { Cookies } from 'react-cookie'
 
 import './ConversationList.css';
+
+const cookies = new Cookies();
 
 export default function ConversationList(props) {
   const [conversations, setConversations] = useState([]);
   useEffect(() => {
     getConversations()
-  },[])
+  }, [])
 
- const getConversations = () => {
-    axios.get('http://localhost:8000/listuser').then(response => {
-        let newConversations = response.data.listUser.map(result => {
+  const getConversations = async () => {
+    var user = {
+      email: cookies.get('user')
+    }
+    console.log('list user')
+    await axios.post('http://localhost:8000/listuser', user)
+      .then(response => {
+        console.log('list user', response.data[0])
+        let newConversations = response.data.map(result => {
           return {
-            photo: './user-man.svg',
-            name: `${result.username}`,
-            text: 'Hello world! '
+            photo: 'http://localhost:8000/' + result.avatar,
+            name: result.fullName,
+            text: result.lastMess
           };
         });
         setConversations([...conversations, ...newConversations])
-    });
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
-    return (
+  return (
+    <div>
       <div className="conversation-list">
         <Toolbar
           title="Messenger"
@@ -38,6 +51,9 @@ export default function ConversationList(props) {
           ]}
         />
         <ConversationSearch />
+
+      </div>
+      <div className="conversation-list-items">
         {
           conversations.map(conversation =>
             <ConversationListItem
@@ -47,5 +63,6 @@ export default function ConversationList(props) {
           )
         }
       </div>
-    );
+    </div>
+  );
 }

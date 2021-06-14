@@ -1,9 +1,12 @@
+const express = require('express');
 const app = require('express')();
 const mysql = require('mysql2/promise');
 const port = process.env.PORT || 8000;
 const bodyParser = require('body-parser');
+const path = require('path');
 
-var socketIdEmailMap = new Map();
+var socketEmailMap = new Map();
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -40,15 +43,42 @@ const db = mysql.createPool({
 // });
 global.db = db;
 
+
+async function checkLogin(email) {
+    let check;
+    var account_login_sql = `SELECT isLogin FROM users WHERE  email = "${email}"`;
+    // console.log('System: sql_login ' + account_login_sql);
+    try {
+        const [results, field] = await db.query(account_login_sql);
+        //console.log(results[0].isLogin)
+        // console.log(`System: islogin cua ${email} tren csdl: `, results);
+        if (results[0].isLogin == 1) {
+            console.log(`System: isLogin cua ${email} = true`);
+            check = true;
+            console.log(check);
+        }
+        else {
+            console.log("false");
+            check = false;
+            console.log(check);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+    return check;
+}
+
 app.post('/user', async (req, res) => {
     var email = req.body.email;
     console.log(`System: ${email} muon xem thong tin `);
-    if (checkLogin(email) == true) {
+    let check = await checkLogin(email);
+    console.log('check', check);
+    if (check == true) {
         let user_info_sql = `SELECT * FROM users WHERE  email = '${email}'`;
-        console.log('DataBase sql', user_info_sql);
+        // console.log('DataBase sql', user_info_sql);
         try {
             const [results, field] = await db.query(user_info_sql);
-            console.log('Profile user', results);
+            // console.log('Profile user', results);
             res.send(results);
         } catch (err) {
             console.log(err);
@@ -95,26 +125,6 @@ app.post('/login', async function (req, res) {
 
 })
 
-async function checkLogin(email) {
-    var account_login_sql = `SELECT isLogin FROM users WHERE  email = "${email}"`;
-    console.log('System: sql_login ' + account_login_sql);
-    try {
-        const [results, field] = await db.query(account_login_sql);
-        //console.log(results[0].isLogin)
-        console.log(`System: islogin cua ${email} tren csdl: `, results);
-        if (results[0].isLogin == 1) {
-            console.log(`System: isLogin cua ${email} = true`);
-            return true;
-        }
-        else {
-            console.log("false");
-            return false;
-        }
-    } catch (err) {
-        console.log(err);
-    }
-
-}
 
 
 // async function checkLogin(email, res) {
@@ -172,38 +182,38 @@ app.post('/checkOnline', (req, res) => {
     }
 })
 
-async function userInfoListChat(sql,messageID){
+async function userInfoListChat(sql, messageID) {
     let listUser = {
         email: '',
-        userName: '',
+        fullName: '',
         avatar: '',
         lastMess: ''
     }
     try {
         const [resultsInfor, field] = await db.query(sql);
-        console.log('Database: ResultInfor: ',resultsInfor);
+        // console.log('Database: ResultInfor: ', resultsInfor);
         listUser.email = resultsInfor[0].email;
-        listUser.userName = resultsInfor[0].username;
+        listUser.fullName = resultsInfor[0].fullName;
         listUser.avatar = resultsInfor[0].avatar;
 
     } catch (err) {
         console.log(err);
     }
-    try{
+    try {
         let lastMess = `SELECT content FROM message WHERE messageID = '${messageID}'`;
         const [resultsLastmess, field] = await db.query(lastMess);
-        console.log('Database: lastMessID :',resultsLastmess);
+        // console.log('Database: lastMessID :', resultsLastmess);
         listUser.lastMess = resultsLastmess[0].content;
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
-    console.log('System: UserInfo ', listUser);
+    // console.log('System: UserInfo ', listUser);
     return listUser;
 }
 
-app.post('/listUser', async (req, res) => {
+app.post('/listuser', async (req, res) => {
     let email = req.body.email;
-    let lastchat_sql = `SELECT * FROM lastchat WHERE fromEmail = '${email}' OR toEmail = '${email}'`;
+    let lastchat_sql = `SELECT * FROM lastchat WHERE fromEmail = '${email}' OR toEmail = '${email}' ORDER BY sentTime DESC`;
     let listUser = [{}];
     try {
         const [results, field] = await db.query(lastchat_sql);
@@ -211,15 +221,15 @@ app.post('/listUser', async (req, res) => {
         for (var i = 0; i < results.length; i++) {
             let lastMessID = results[i].messageID;
             if (results[i].fromEmail == email) {
-                let userInfo_sql = `SELECT (email),(username),(avatar) FROM users WHERE email = '${results[i].toEmail}'`;
+                let userInfo_sql = `SELECT (email),(fullName),(avatar) FROM users WHERE email = '${results[i].toEmail}'`;
                 console.log('SQL: userInfo from lastChat: ', userInfo_sql);
-                var userInfo = await userInfoListChat(userInfo_sql,lastMessID);
-                console.log('userInfo',userInfo)
+                var userInfo = await userInfoListChat(userInfo_sql, lastMessID);
+                console.log('userInfo', userInfo)
                 listUser[i] = userInfo;
-            }else{
-                let userInfo_sql = `SELECT (email),(username),(avatar) FROM users WHERE email = '${results[i].fromEmail}'`;
+            } else {
+                let userInfo_sql = `SELECT (email),(fullName),(avatar) FROM users WHERE email = '${results[i].fromEmail}'`;
                 console.log('SQL: userInfo from lastChat: ', userInfo_sql);
-                let userInfo = await userInfoListChat(userInfo_sql,lastMessID);
+                let userInfo = await userInfoListChat(userInfo_sql, lastMessID);
                 listUser[i] = userInfo;
             }
         }
@@ -246,12 +256,12 @@ app.post('/logout', async (req, res) => {
     console.log("System: Sql Logout: " + isLogout_sql)
     try {
         const [results, filed] = await db.query(isLogout_sql)
-        let key_socket_logout = getKeyByValue(socketIdEmailMap, email);
+        let key_socket_logout = getKeyByValue(socketEmailMap, email);
 
         for (let i = 0; i < key_socket_logout.length; i++) {
-            socketIdEmailMap.delete(key_socket_logout[i]);
+            socketEmailMap.delete(key_socket_logout[i]);
         }
-        console.log(socketIdEmailMap);
+        console.log(socketEmailMap);
         res.send("System: Da Logout")
 
     } catch (err) {
@@ -263,7 +273,7 @@ app.post('/logout', async (req, res) => {
 })
 
 function checkOnline(email) {
-    let temp = getKeyByValue(socketIdEmailMap, email)
+    let temp = getKeyByValue(socketEmailMap, email)
     let isOnline = temp.length;
     console.log(isOnline);
     if (isOnline != 0) {
@@ -273,12 +283,33 @@ function checkOnline(email) {
     }
 }
 
+app.post('/search', async (req, res) => {
+    email = req.body.email;
+    email_search = req.body.email_search;
+
+    let messageID;
+    if (checkLastMessageExist(email, email_search) == true) {
+        let messageID_sql = `SELECT messageID FROM lastchat WHERE(fromEmail = '${emailA}' AND toEmail = '${email_search}') OR (fromEmail = '${email_search}' AND toEmail = '${email}')`;
+        try {
+            const [results, field] = await db.query(messageID_sql);
+            messageID = results[0].messageID;
+
+        } catch (err) {
+
+        }
+    } else {
+
+    }
+
+
+})
+
 async function checkLastMessageExist(emailA, emailB) {
     var check = false;
     let lastMessage_sql = `SELECT (fromEmail), (toEmail) FROM lastchat WHERE (fromEmail = '${emailA}' AND toEmail = '${emailB}') OR (fromEmail = '${emailB}' AND toEmail = '${emailA}')`;
     try {
         const [results, field] = await db.query(lastMessage_sql)
-        console.log('syss result: ', results);
+        // console.log('syss result: ', results);
         if (results.length != 0) {
             console.log("System: lastchat ton tai");
             check = true;
@@ -322,7 +353,7 @@ async function saveMessageToDatabase(message, status) {
 
     } else {
         console.log("System: Lastchat ko ton tai nen phai insert")
-        lastMessage_sql = `INSERT INTO lastchat(fromEmail, toEmail, messageID) VALUES('${message.fromEmail}','${message.toEmail}','${messageId}')`;
+        lastMessage_sql = `INSERT INTO lastchat(fromEmail, toEmail, messageID, sentTime) VALUES('${message.fromEmail}','${message.toEmail}','${messageId}',NOW())`;
         try {
             const [results, field] = await db.query(lastMessage_sql);
             console.log("System: Da Insert lastchat ");
@@ -344,6 +375,7 @@ app.post('/sendmessage', (req, res) => {
     console.log("System: mess: " + JSON.stringify(message));
     var status = '';
     if (checkOnline(message.toEmail)) {
+        console.log(message.toEmail + ' is online');
         status = 'received';
         saveMessageToDatabase(message, status);
         emitMessage(message);
@@ -356,41 +388,96 @@ app.post('/sendmessage', (req, res) => {
 
 function emitMessage(message) {
     var toEmail = message.toEmail
-    var socketList = getKeyByValue(socketIdEmailMap, toEmail) //[1,5]
-    // var clientConnectedList = io.sockets.clients(); //1,2,3,4,5,6,7,8,9,10...
-    // console.log("Socket: list user online "+clientConnectedList)
-    // clientConnectedList.forEach(element => {
-    //     if (socketList.includes(element)) {
-    //         element.emit('received-message', message)
-    //     }
-    // });
+    var socketList = getKeyByValue(socketEmailMap, toEmail) //[1,5]
+    var clientConnectedList = findClientsSocket(); //1,2,3,4,5,6,7,8,9,10...
+    console.log("Socket: list user online "+socketList)
+    socketList.forEach(element => {
+        if (socketList.includes(element)) {
+            element.emit('received-message', message)
+        }
+    });
 
 }
-app.post('/historymessage', async (req, res) => {
-    var email = req.body.email;
-    // var toEmail = req.params.toEmail
-    let historyMessage_sql = `SELECT * FROM message WHERE (fromEmail='${email}') OR (toEmail='${email}') ORDER BY sentTime`;
-    console.log("Sql: historymessage : ", historyMessage_sql);
-    try {
-        const [results, field] = await db.query(historyMessage_sql);
-        res.send({ historyMessage: results });
-        console.log(`Database: history mess cua ${email}`, results);
-    }
-    catch (err) {
-        console.log(err)
-    }
-})
 
-// app.get('/historymessage/:fromEmail/:toEmail', (req, res) => {
-//     var fromEmail = req.params.fromEmail;
-//     var toEmail = req.params.toEmail
-//     let historyMessage_sql = `SELECT * FROM message WHERE (fromEmail='${fromEmail}' AND toEmail='${toEmail}') OR (fromEmail='${toEmail}' AND toEmail='${fromEmail}') ORDER BY sentTime`;
-//     db.query(historyMessage_sql, (err, results) => {
-//         if (err) { throw err }
-//         res.send({ historyMessage: results });
-//         console.log(results);
-//     })
+function findClientsSocket(roomId, namespace) {
+    var res = []
+    // the default namespace is "/"
+    , ns = io.of(namespace ||"/");
+
+    if (ns) {
+        for (var id in ns.connected) {
+            if(roomId) {
+                var index = ns.connected[id].rooms.indexOf(roomId);
+                if(index !== -1) {
+                    res.Push(ns.connected[id]);
+                }
+            } else {
+                res.Push(ns.connected[id]);
+            }
+        }
+    }
+    return res;
+}
+
+app.post('/historymessage', async (req, res)=>{
+    const fromEmail = req.body.fromEmail;
+    const toEmail = req.body.toEmail;
+    let history_sql = `SELECT * FROM message WHERE (fromEmail = '${fromEmail}' AND toEmail = '${toEmail}') OR (fromEmail = '${toEmail}' AND toEmail = '${fromEmail}')`
+    try{
+        const [results, field] = await db.query(history_sql);
+        // console.log(results);
+        res.send(results);
+    }catch(err){
+        console.log(err);
+    }
+}
+)
+
+// app.post('/historymessage', async (req, res) => {
+//     var email = req.body.email;
+//     let listchat_sql = `SELECT (fromEmail),(toEmail) FROM lastchat WHERE (fromEmail='${email}') OR (toEmail='${email}') ORDER BY sentTime `;
+//     let list_lastchat;
+//     let historyMessage = [];
+//     let dialogue = [];
+//     try {
+//         const [results_list, field] = await db.query(listchat_sql);
+//         list_lastchat = results_list;
+//         console.log('Database: list_lastchat',list_lastchat)
+//     } catch (err) {
+//         console.log(err);
+//     }
+//     let historyMessage_sql = `SELECT * FROM message WHERE (fromEmail='${email}') OR (toEmail='${email}') ORDER BY sentTime`;
+//     console.log("Sql: historymessage : ", historyMessage_sql);
+
+//     try {
+//         const [results, field] = await db.query(historyMessage_sql);
+//         //console.log(`Database: history mess cua ${email}`, results);
+//         for (var i = 0; i<list_lastchat.length; i++) {
+//             if (list_lastchat[i].fromEmail == email) {
+//                 console.log('list_lastchat', list_lastchat[i].fromEmail);
+//                 for (var j = 0; j < results.length; j++) {
+//                     if ((list_lastchat[i].toEmail == results[j].toEmail)||(list_lastchat[i].toEmail == results[j].fromEmail)){
+//                         dialogue.push(results[j]);
+//                         console.log('System: add to conversation',dialogue);
+//                     }
+//                 }
+//             } else {
+//                 for (var j = 0; j < results.length; j++) {
+//                     if ((list_lastchat[i].fromEmail == results[j].toEmail)||(list_lastchat[i].fromEmail == results[j].fromEmail)){
+//                         dialogue.push(results[j]);
+//                         console.log('System: add to conversation',dialogue);
+//                     }
+//                 }
+//             }
+//             historyMessage.push(dialogue);
+//             dialogue = [];
+//         }
+//     }catch (err) {
+//         console.log(err)
+//     }
+//     res.send(historyMessage);
 // })
+
 
 app.post('/signup', async function (req, res) {
     console.log('System: Da nhan sign up');
@@ -404,11 +491,11 @@ app.post('/signup', async function (req, res) {
     var sql_insert = `INSERT INTO users(username, password, email) VALUES ("${username}","${password}","${email}")`;
     try {
         const [results, field] = await db.query(sql_check)
-        console.log(results);
+        // console.log(results);
         var check = true;
         for (i = 0; i < results.length; i++) {
             if ((email == results[i].email)) {
-                console.log(results[i])
+                // console.log(results[i])
                 check = false;
                 res.status(401).send("System: Email da ton tai");
             }
@@ -417,7 +504,7 @@ app.post('/signup', async function (req, res) {
             try {
                 const [results, field] = await db.query(sql_insert)
                 res.status(200).send("System: Dang ky thanh cong");
-                console.log("System: Da insert vào database")
+                // console.log("System: Da insert vào database")
             } catch (err) {
                 console.log(err);
             }
@@ -437,10 +524,10 @@ app.post('/updateprofile', async (req, res) => {
     userName = req.body.username;
     if (checkLogin(email) == true) {
         let update_user_sql = `UPDATE users SET fullName = '${fullName}', synopsis = '${synopsis}',age = '${age}', phoneNumber = '${phoneNumber}', username = '${userName}' WHERE email = ${email}`;
-        console.log("SQL: update_user_sql : ", update_user_sql);
+        // console.log("SQL: update_user_sql : ", update_user_sql);
         try {
             const [results, field] = await db.query(update_user_sql);
-            console.log("Database: Update account :", results);
+            // console.log("Database: Update account :", results);
             res.send("System: Update thanh cong");
         } catch (err) {
             console.log(err);
@@ -455,22 +542,22 @@ app.post('/updateprofile', async (req, res) => {
 io.on("connection", (socket) => { ///Handle khi có connect từ client tới
     console.log("Socket: New client connected " + socket.id);
     socket.on("list-online", function (data) {
-        socketIdEmailMap.set(socket.id, data);
-        console.log(socketIdEmailMap);
+        socketEmailMap.set(socket, data);
+        console.log('map socketID',socketEmailMap);
         console.log("Socket: just sent " + data);
         socket.emit("list-online", "Socket-server: OK");
     })
 
     socket.on("sendData", data => {
         console.log("mess from A " + data);
-        let toEmail = getKeyByValue(socketIdEmailMap, data.toEmail);
+        let toEmail = getKeyByValue(socketEmailMap, data.toEmail);
         console.log("Socket: toEmail: ", toEmail[0]);
         console.log("Socket: content: ", data.content);
         socket.broadcast.to(toEmail[0]).emit('receiveData', data.content);
     });
 
     socket.on("disconnected", function (data) {
-        socketIdEmailMap.delete(socket.id)
+        socketEmailMap.delete(socket)
         console.log("Socket: just disconnected " + data);
     })
 });

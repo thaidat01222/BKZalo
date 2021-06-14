@@ -14,46 +14,37 @@ const MY_USER_ID = cookies.get('user');
 
 
 export default function MessageList(props) {
-  const [messages, setMessages] = useState([{id: '', author: '', message: ''}])
+  const [messages, setMessages] = useState([])
   useEffect(() => {
     getMessages();
   }, [])
 
-  const user = cookies.get('user');
-  const getMessages = async (user) => {
-    await axios.get('http://localhost:8000/historymessage', user)
-      .then(response => {
-        const mess = response.data.historyMessage;
-        mess.map((key, index) => {
-          console.log("key", index)
-          const tempMessages = {
+  
+  const getMessages = async () => {
+    console.log('get message')
+    const user = {
+      email: cookies.get('user')
+    }
+    await axios.post('http://localhost:8000/historymessage', user)
+      .then(response => {       
+        const mess = response.data.historyMessage; 
+        console.log('history', mess)
+        let tempMessages = mess.map((result, index) => {
+          return {
             id: index,
-            author: key.fromEmail,
-            message: key.content,
-            timestamp: key.sendtime
+            author: result.fromEmail,
+            message: result.content,
+            timestamp: result.sendtime
           };
-          setMessages({...messages.id, ...tempMessages})
+        });
+          setMessages([...messages, ...tempMessages])
           console.log("messs", messages)
         })
 
-      })
+
       .catch(error => {
         console.log(error);
       });
-    //  var tempMessages = [
-    //     {
-    //       id: 1,
-    //       author: cookies.get('user'),
-    //       message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-    //       timestamp: new Date().getTime()
-    //     },
-    //     {
-    //       id: 2,
-    //       author: 'orange',
-    //       message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-    //       timestamp: new Date().getTime()
-    //     },
-    //   ]
   }
 
   const renderMessages = () => {

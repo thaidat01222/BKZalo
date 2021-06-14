@@ -5,10 +5,14 @@ import axios from 'axios';
 import Messenger from '../Messenger';
 import { io } from 'socket.io-client';
 import {Link} from "react-router-dom";
+import getSocketInstance from '../../socket'
 // import SocketIOClient from '../../socket';
 // import socket from '../../socket';
 const cookies = new Cookies();
-const socket = io('http://localhost:8000');
+
+
+const socket = getSocketInstance()
+
 // const socket = SocketIOClient();
 // const sock = socket;
 export default class Chat extends React.Component {
@@ -23,7 +27,8 @@ export default class Chat extends React.Component {
       isLogin: cookies.get('isLogin'),
       userInfo: {},
       authOK: true,
-      typing: ''
+      typing: '',
+      profile: {}
     }
   }
 
@@ -35,8 +40,8 @@ export default class Chat extends React.Component {
   componentWillMount = async () => {
     console.log("will mount")
     this.checkAuth(this.state.email);
-    const socket = io('http://localhost:8000');
     socket.emit("list-online", this.state.email);
+    this.getUserProfile();
   }
 
   checkAuth = async (user) => {
@@ -52,18 +57,27 @@ export default class Chat extends React.Component {
           auth = 1;
           this.setState({ authOK: true })
         }
-        // if(response.status === 401) {
-        //     alert("Client: Sai thong tin");
-        //     auth = 0;
-
-        // }
       })
       .catch(error => {
         console.log(error);
       });
 
     if (auth === 0) this.setState({ authOK: false })
-    console.log("auth", auth, this.state.authOK)
+  }
+
+  getUserProfile = async () => {
+    var user = {
+        email: this.state.email
+    };
+
+    await axios.post("http://localhost:8000/user", user)
+        .then(response => {
+            console.log('user', response.data[0])
+            this.setState({ profile: response.data[0] })
+        })
+        .catch(error => {
+            console.log(error);
+        });
   }
 
   logout = async () => {
@@ -87,8 +101,6 @@ export default class Chat extends React.Component {
     cookies.set('user', '')
     cookies.set('pass', '')
     cookies.set('isLogin', '')
-    console.log("on logout")
-
   }
 
   render() {
@@ -98,7 +110,7 @@ export default class Chat extends React.Component {
       return (
         <div className="chat-page">
           <Link to='/user' className="user-avt" >
-            <img src='./user-man.svg'/>
+            <img src={`http://localhost:8000${this.state.profile.avatar}`}/>
           </Link>
           <button className="button-logout" onClick={this.onLogout}>
           <img src='./logout.svg' /></button>

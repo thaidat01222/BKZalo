@@ -1,8 +1,17 @@
-// import React from 'react';
-// import io from 'socket.io-client';
-
+import React from 'react';
+import io from 'socket.io-client';
+var socket 
 // function SocketIOClient(props) {
-//     const socket = io("http://localhost:8000")
-//     return socket
+//     if (socket == null) {
+//         socket = io("http://localhost:8000")
+//     }
 // }
-// export default SocketIOClient;
+
+ function getSocketInstance(){
+    if (socket == null) {
+        socket = io("http://localhost:8000")
+    }
+    return socket
+}
+
+export default getSocketInstance

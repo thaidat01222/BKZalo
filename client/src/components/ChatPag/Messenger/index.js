@@ -1,7 +1,7 @@
 import React from 'react';
 import ConversationList from '../ConversationList';
 import MessageList from '../MessageList';
-import './Messenger.css';
+import './Messenger.scss';
 
 export default function Messenger(props) {
     return (

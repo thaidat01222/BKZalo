@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import axios from 'axios';
 import './Compose.css';
-import { io } from 'socket.io-client';
-// const socket = io('http://localhost:8000');
+import getSocketInstance from '../../socket'
+const socket = getSocketInstance()
+
+socket.on('received-message', data =>{
+  console.log(data);
+})
 
 console.log('start loading page')
 const cookies = new Cookies();
@@ -13,7 +17,8 @@ export default class Compose extends React.Component {
     super(props);
     this.handleTyping = this.handleTyping.bind(this);
     this.state = {
-      typing: ''
+      typing: '',
+      getMesss: ''
     }
   }
 
