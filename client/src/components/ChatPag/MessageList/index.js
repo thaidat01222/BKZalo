@@ -5,13 +5,20 @@ import ToolbarButton from '../ToolbarButton';
 import Message from '../Message';
 import moment from 'moment';
 import { Cookies } from 'react-cookie';
-import axios from 'axios'
+import axios from 'axios';
+import { Route } from 'react-router-dom'
 
 import './MessageList.css';
 
+import getSocketInstance from '../../socket'
+const socket = getSocketInstance()
+
+socket.on('received-message', data =>{
+  console.log(data);
+})
+
 const cookies = new Cookies();
 const MY_USER_ID = cookies.get('user');
-
 
 export default function MessageList(props) {
   const [messages, setMessages] = useState([])
@@ -19,27 +26,26 @@ export default function MessageList(props) {
     getMessages();
   }, [])
 
-  
+
   const getMessages = async () => {
     console.log('get message')
     const user = {
-      email: cookies.get('user')
+      fromEmail: cookies.get('user'),
+      toEmail: cookies.get('currentUser')
     }
     await axios.post('http://localhost:8000/historymessage', user)
-      .then(response => {       
-        const mess = response.data.historyMessage; 
-        console.log('history', mess)
+      .then(response => {
+        const mess = response.data;
         let tempMessages = mess.map((result, index) => {
           return {
             id: index,
             author: result.fromEmail,
             message: result.content,
-            timestamp: result.sendtime
+            timestamp: result.sentTime
           };
         });
-          setMessages([...messages, ...tempMessages])
-          console.log("messs", messages)
-        })
+        setMessages([...messages, ...tempMessages])
+      })
 
 
       .catch(error => {
@@ -102,30 +108,29 @@ export default function MessageList(props) {
       // Proceed to the next message.
       i += 1;
     }
-
     return tempMessages;
   }
 
   return (
     <div className="message-list">
-      <Toolbar
-        title="Conversation Title"
-        rightItems={[
-          <ToolbarButton key="info" icon="information" />,
-          <ToolbarButton key="video" icon="video-player" />,
-          <ToolbarButton key="phone" icon="phone-call" />
-        ]}
-      />
-
+      <div className="toolbar">
+        <Toolbar
+          title={cookies.get('currentUserFullname')}
+          rightItems={[
+            // <ToolbarButton key="info" icon="information"  />,
+            <ToolbarButton key="video" icon="video-player" />,
+            <ToolbarButton key="phone" icon="phone-call" />
+          ]}
+        />
+      </div>
       <div className="message-list-container">{renderMessages()}</div>
-
       <Compose rightItems={[
         // <ToolbarButton key="photo" icon="gallery2" />,
         // <ToolbarButton key="image" icon="ion-ios-image" />,
         // <ToolbarButton key="audio" icon="ion-ios-mic" />,
         // <ToolbarButton key="money" icon="ion-ios-card" />,
         // <ToolbarButton key="games" icon="ion-logo-game-controller-b" />,
-        <ToolbarButton key="emoji" icon="send2" id="send2"/>
+        <ToolbarButton key="emoji" icon="send2" id="send2" />
       ]} />
     </div>
   );

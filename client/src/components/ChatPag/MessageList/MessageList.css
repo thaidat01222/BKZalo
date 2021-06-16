@@ -1,4 +1,41 @@
-.message-list-container {
+.message-list {
+  width: 100%;
+  height: calc(100vh - 46px);
+}
+
+/*       mesage-list-container  */
+
+.message-list-container{
   padding: 10px;
-  padding-bottom: 70px;
+  height: calc( 100vh - 165px);
+  width: calc( 100% - 20px);
+
+  position: absolute;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.message-list-container:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(206, 206, 206);
+}
+
+.message-list-container:hover::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgba(235, 235, 235, 0.699);
+  border-radius: 8px;
+} 
+
+.message-list-container::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgba(211, 211, 211, 0);
+    border-radius: 8px;
+  }
+
+.message-list-container::-webkit-scrollbar-thumb {    
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 5px;
+} 
+
+.toolbar {
+  width: calc( 100% - 22px);
 }

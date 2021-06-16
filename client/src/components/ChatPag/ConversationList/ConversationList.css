@@ -3,3 +3,7 @@
   flex-direction: column;
   position: relative;
 }
+
+.current-user {
+  background-color: #eeeef1;
+}

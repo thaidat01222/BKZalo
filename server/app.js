@@ -68,6 +68,40 @@ async function checkLogin(email) {
     return check;
 }
 
+function calculateTime(time1, time2){
+    var time = time1 - time2;
+    
+    if (time > 3600000) {
+        return ("Active "+ Math.round(time/3600000) + " h ago")
+    }
+    else if ((time < 3600000) && (time > 60000)) {
+        return ("Active "+Math.round(time/60000) + " m ago")
+    }
+    else return ("Active now");
+}
+
+app.post('/userpartner', async(req, res)=>{
+    var email = req.body.email;
+    var currentEmail = req.body.currentEmail;
+    let check = await checkLogin(email);
+    if( check == true){
+        let user_partner_sql = `SELECT (avatar),(email),(fullName),(logoutTime) from users WHERE email = '${currentEmail}'`;
+        console.log('sql userpartner ',user_partner_sql);
+        try{
+            const [result, field] = await db.query(user_partner_sql);
+            var datetime = new Date(result[0].logoutTime);
+            var datetimenow = new Date();
+            let time = calculateTime(datetimenow, datetime);
+            console.log(time);
+            result[0].logoutTime = time;
+            res.send(result);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+})
+
 app.post('/user', async (req, res) => {
     var email = req.body.email;
     console.log(`System: ${email} muon xem thong tin `);
@@ -88,6 +122,7 @@ app.post('/user', async (req, res) => {
     }
 
 })
+
 
 app.post('/login', async function (req, res) {
     var email = req.body.email;
@@ -217,14 +252,14 @@ app.post('/listuser', async (req, res) => {
     let listUser = [{}];
     try {
         const [results, field] = await db.query(lastchat_sql);
-        console.log(results);
+        // console.log(results);
         for (var i = 0; i < results.length; i++) {
             let lastMessID = results[i].messageID;
             if (results[i].fromEmail == email) {
                 let userInfo_sql = `SELECT (email),(fullName),(avatar) FROM users WHERE email = '${results[i].toEmail}'`;
                 console.log('SQL: userInfo from lastChat: ', userInfo_sql);
                 var userInfo = await userInfoListChat(userInfo_sql, lastMessID);
-                console.log('userInfo', userInfo)
+                // console.log('userInfo', userInfo)
                 listUser[i] = userInfo;
             } else {
                 let userInfo_sql = `SELECT (email),(fullName),(avatar) FROM users WHERE email = '${results[i].fromEmail}'`;
@@ -432,51 +467,6 @@ app.post('/historymessage', async (req, res)=>{
     }
 }
 )
-
-// app.post('/historymessage', async (req, res) => {
-//     var email = req.body.email;
-//     let listchat_sql = `SELECT (fromEmail),(toEmail) FROM lastchat WHERE (fromEmail='${email}') OR (toEmail='${email}') ORDER BY sentTime `;
-//     let list_lastchat;
-//     let historyMessage = [];
-//     let dialogue = [];
-//     try {
-//         const [results_list, field] = await db.query(listchat_sql);
-//         list_lastchat = results_list;
-//         console.log('Database: list_lastchat',list_lastchat)
-//     } catch (err) {
-//         console.log(err);
-//     }
-//     let historyMessage_sql = `SELECT * FROM message WHERE (fromEmail='${email}') OR (toEmail='${email}') ORDER BY sentTime`;
-//     console.log("Sql: historymessage : ", historyMessage_sql);
-
-//     try {
-//         const [results, field] = await db.query(historyMessage_sql);
-//         //console.log(`Database: history mess cua ${email}`, results);
-//         for (var i = 0; i<list_lastchat.length; i++) {
-//             if (list_lastchat[i].fromEmail == email) {
-//                 console.log('list_lastchat', list_lastchat[i].fromEmail);
-//                 for (var j = 0; j < results.length; j++) {
-//                     if ((list_lastchat[i].toEmail == results[j].toEmail)||(list_lastchat[i].toEmail == results[j].fromEmail)){
-//                         dialogue.push(results[j]);
-//                         console.log('System: add to conversation',dialogue);
-//                     }
-//                 }
-//             } else {
-//                 for (var j = 0; j < results.length; j++) {
-//                     if ((list_lastchat[i].fromEmail == results[j].toEmail)||(list_lastchat[i].fromEmail == results[j].fromEmail)){
-//                         dialogue.push(results[j]);
-//                         console.log('System: add to conversation',dialogue);
-//                     }
-//                 }
-//             }
-//             historyMessage.push(dialogue);
-//             dialogue = [];
-//         }
-//     }catch (err) {
-//         console.log(err)
-//     }
-//     res.send(historyMessage);
-// })
 
 
 app.post('/signup', async function (req, res) {

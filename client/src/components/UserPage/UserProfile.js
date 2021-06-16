@@ -83,7 +83,7 @@ export default class UserProfile extends React.Component {
                     <ul>
                         <li><b>Age</b><input id="age" type='text' value={this.state.profile.age} onChange={this.handleChangeAge} required/></li>
 
-                        <li><b>Email</b><span id="email">a@gmail.com</span></li>
+                        <li><b>Email</b><span id="email">{this.state.profile.email}</span></li>
                         <li><b>Username</b><input id="title" type='text' value={this.state.profile.username} onChange={this.handleChangeUsername}/> </li>
                         <li><b>Phone-number</b><input id="website" type='text' value={this.state.profile.phoneNumber} onChange={this.handleChangePhonenumber}/></li>
                     </ul>

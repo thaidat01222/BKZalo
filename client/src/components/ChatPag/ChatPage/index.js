@@ -19,26 +19,18 @@ export default class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.onLogout = this.onLogout.bind(this);
-    this.handleTyping = this.handleTyping.bind(this);
-
     this.state = {
       email: cookies.get('user'),
       password: cookies.get('pass'),
       isLogin: cookies.get('isLogin'),
-      userInfo: {},
       authOK: true,
-      typing: '',
       profile: {}
     }
   }
 
-  handleTyping = (e) => {
-    this.setState({ typing: e.target.value })
-    console.log("typing", this.state.typing)
-  }
+
 
   componentWillMount = async () => {
-    console.log("will mount")
     this.checkAuth(this.state.email);
     socket.emit("list-online", this.state.email);
     this.getUserProfile();
@@ -72,7 +64,6 @@ export default class Chat extends React.Component {
 
     await axios.post("http://localhost:8000/user", user)
         .then(response => {
-            console.log('user', response.data[0])
             this.setState({ profile: response.data[0] })
         })
         .catch(error => {
@@ -104,8 +95,6 @@ export default class Chat extends React.Component {
   }
 
   render() {
-    console.log("state in render chat page", this.state)
-
     if (this.state.authOK === true)
       return (
         <div className="chat-page">
@@ -114,7 +103,7 @@ export default class Chat extends React.Component {
           </Link>
           <button className="button-logout" onClick={this.onLogout}>
           <img src='./logout.svg' /></button>
-          <Messenger />
+          <Messenger/>
 
         </div>
       );

@@ -17,7 +17,7 @@ export default class App extends React.Component {
                 <Route path='/' component={NavBar} />
                 <Route exact path='/' component={Login} />
                 <Route exact path='/user' component={UserProfile} />
-                <Route exact path='/chat' component={Chat} />
+                <Route path='/chat' component={Chat} />
                 <Route exact path={'/'} component={Footer} />
                 <Route exact path={'/user'} component={Footer} />
 

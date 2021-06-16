@@ -30,6 +30,37 @@ export default class Login extends React.Component {
 
     }
 
+
+    shouldComponentUpdate(nextState) {
+        console.log("shouldComponentUpdate", (this.state.redirect !== false))
+        // if ((nextState.redirect !== this.state.redirect)) return true;
+        if ((this.state.button === true) || (this.state.redirect === true)) return true;
+        else if ((nextState.typingE !== this.state.typingE) || (nextState.typingP !== this.state.typingP))
+            return false;
+
+    }
+
+    componentDidMount = async () => {
+        console.log("did mount");
+        this.checkAuth(this.state.isLogin)
+        console.log('state', this.state.email, this.state.password)
+    }
+
+    getMess = async (e) => {
+        const user = {
+            email: e
+        }
+        await axios.post('http://localhost:8000/listuser', user)
+            .then(response => {
+                console.log('abc', user, response.data)
+                cookies.set('currentUser', response.data[0].email, { path: '/' });
+                cookies.set('currentUserFullname', response.data[0].fullName, { path: '/' });
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     login = async (user, pass) => {
         var auth = 0;
         const account_login = {
@@ -44,11 +75,11 @@ export default class Login extends React.Component {
                     console.log("Client: Da Login Vao Socket");
                     auth = 1;
                     this.setState({ redirect: true })
-                    this.setState({isLogin: true})
-                    cookies.set('isLogin', true , { path: '/' });
+                    this.setState({ isLogin: true })
+                    cookies.set('isLogin', true, { path: '/' });
                     // sock.emit("list-online",this.state.email);
                 }
-                if(response.status === 401) {
+                if (response.status === 401) {
                     alert("Client: Sai thong tin");
                     auth = 0;
                     console.log("401")
@@ -58,29 +89,15 @@ export default class Login extends React.Component {
                 console.log(error);
             });
     }
-    
+
 
     checkAuth = async (islogin) => {
         console.log('checkAuth')
         console.log("islogin", (islogin == "true"))
         if (islogin == "true") {
-            this.setState({redirect: true})
+            this.setState({ redirect: true })
             console.log("redirec in check auth", this.state.redirect)
         }
-    }
-    shouldComponentUpdate(nextState) {
-        console.log("shouldComponentUpdate", (this.state.redirect !== false))
-        // if ((nextState.redirect !== this.state.redirect)) return true;
-        if ((this.state.button === true) || (this.state.redirect === true)) return true;
-        else if ((nextState.typingE !== this.state.typingE) || (nextState.typingP !== this.state.typingP))
-            return false;
-
-    }
-
-    componentDidMount = async () => {
-        console.log("did mount");
-        this.checkAuth(this.state.isLogin)
-        console.log('state', this.state.email, this.state.password)
     }
 
     handleEmailChanges(e) {
@@ -103,6 +120,7 @@ export default class Login extends React.Component {
         this.setState({ button: true })
         cookies.set('user', this.state.typingE, { path: '/' });
         cookies.set('pass', this.state.typingP, { path: '/' });
+        this.getMess(this.state.typingE)
         this.login(this.state.typingE, this.state.typingP);
     }
     handleSubmitSignup(e) {
@@ -125,7 +143,7 @@ export default class Login extends React.Component {
                     this.setState({ redirect: true });
                     cookies.set('user', this.state.typingE, { path: '/' });
                     cookies.set('pass', this.state.typingP, { path: '/' });
-                    cookies.set('isLogin', true , { path: '/' });
+                    cookies.set('isLogin', true, { path: '/' });
                 }
             })
             .catch(error => {
@@ -148,7 +166,7 @@ export default class Login extends React.Component {
 
 
     render() {
-       this.checkAuth(this.state.isLogin);
+        this.checkAuth(this.state.isLogin);
         console.log("state in render", this.state)
         if ((this.state.redirect === true) || (this.state.isLogin === "true")) {
             return (<Redirect to='/chat' />)

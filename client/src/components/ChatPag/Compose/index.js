@@ -5,13 +5,11 @@ import './Compose.css';
 import getSocketInstance from '../../socket'
 const socket = getSocketInstance()
 
-socket.on('received-message', data =>{
-  console.log(data);
-})
+// socket.on('received-message', data =>{
+//   console.log(data);
+// })
 
-console.log('start loading page')
 const cookies = new Cookies();
-
 export default class Compose extends React.Component {
   constructor(props) {
     super(props);
@@ -38,12 +36,10 @@ export default class Compose extends React.Component {
     console.log("typing", this.state.typing)
   }
   handleSend = (e) => {
-    e.preventDefault();
-    console.log("send")
-    console.log("state", new Date().getTime())
+    
     const message = {
       fromEmail: cookies.get('user'),
-      toEmail: "b@gmail.com",
+      toEmail: cookies.get('currentUser'),
       content: this.state.typing,
       contentType: 'text',
       sentTime: ''
@@ -53,7 +49,6 @@ export default class Compose extends React.Component {
     axios.post("http://localhost:8000/sendmessage", message)
       .then(response => {
         if (response.status === 200) {
-          console.log("");
         }
         // if(response.status === 401) {
         //     alert("Client: Sai thong tin");
@@ -63,6 +58,7 @@ export default class Compose extends React.Component {
       .catch(error => {
         console.log(error);
       });
+      e.preventDefault();
   }
   render() {
     return (

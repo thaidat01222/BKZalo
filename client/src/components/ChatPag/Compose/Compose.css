@@ -4,31 +4,32 @@
   align-items: center;
   background: white;
   border-top: 1px solid #eeeef1;
-  position: fixed;
-  width: calc(100vw - 370px);
+  position: absolute;
+  width: calc( 100% - 20px);
   bottom: 0px;
 }
 
 @supports (backdrop-filter: blur(20px)) {
   .compose {
-    border: none;
+    /* border: none; */
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
   }
 }
 
-.compose-input {
+.compose .compose-input {
   border: none;
   border-radius: 30px;
   font-size: 14px;
   height: 40px;
-  width: 70vw;
+  width: 95%;
   /* background: none; */
-  background-color: rgba(209, 209, 209, 0.377);
+  background-color: #eeeef1;
   padding-left: 20px;
 }
 
 .compose-input:focus {
+  background-color: #f0f0f0;
   outline: none;
 }
 
