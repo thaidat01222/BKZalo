@@ -1,0 +1,79 @@
+.messenger {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 45px);
+  min-height: 450px;
+  background: #eeeef1;
+
+
+}
+
+.container {
+  padding: 10px;
+}
+
+
+  a {
+    display: inline-block;
+    color: black;
+  }
+
+
+.conversation-list-items{
+  position: absolute;
+  overflow-y: hidden;
+  height: calc(100vh - 139px);
+  width: 23vw;  
+
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+  .conversation-list-items:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(206, 206, 206);
+  }
+  
+  .conversation-list-items:hover::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgba(235, 235, 235, 0.699);
+    border-radius: 8px;
+  } 
+  
+  .conversation-list-items::-webkit-scrollbar {
+      width: 10px;
+      background-color: rgba(245, 222, 179, 0);
+      border-radius: 8px;
+    }
+  
+  .conversation-list-items::-webkit-scrollbar-thumb {    
+      background-color: rgba(255, 255, 255, 0);
+      border-radius: 5px;
+  } 
+
+.sidebar {
+  position: relative;
+  background: white;
+  width: 23vw;
+  min-height: 450px;
+  border-right: 1px solid rgb(190, 190, 190);
+}
+
+.content {
+  position: relative;
+  background: white;
+  width: 77vw;
+  min-height: 450px;
+  height: calc(100vh - 45px);
+  overflow: hidden;
+}
+
+.infor-user-chat {
+  display: none;
+}
+
+.button-inf {
+  position: absolute !important; 
+  top: 10px;
+  right: 15px; 
+  width: 20px;
+}
+

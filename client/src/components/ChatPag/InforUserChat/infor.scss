@@ -1,0 +1,102 @@
+.board {
+    position: absolute;
+    top: 45px;
+    right: 0px;
+    display: flex;
+    height: calc(100vh - 46px);
+    min-height: 450px;
+    width: 24vw;
+    flex-direction: column;
+    background-color: white;
+    
+}
+.user-profil {
+    right: 0px;
+    display: flex;
+    height: calc(100vh - 46px);
+    width: calc( 100% - 2px);
+    flex-direction: column;
+    border-left: 1px solid rgb(190, 190, 190);
+    .user-infor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+    
+        .proflie-avt {
+            width: 80px;
+            height: 80px;
+            margin: 15px 0;
+        
+            border: 1px solid black;
+            border-radius: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+    
+            img {
+                width: 80px;
+                height: 80px; 
+                object-fit: cover;
+                border-radius: 80px;
+            
+            }
+        }
+    
+        h3 {
+            margin: 0;
+        }
+        
+        .active {
+            margin-top: 5px;
+            font-size: 12px;
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+    }
+    
+    
+    
+    
+    
+    .setting-chat {
+        margin-top: 20px;
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    
+    
+        .set-c {
+            margin-left: 10px;
+            padding:  15px 15px;
+            width: 100%;
+        
+            display: flex;
+            align-items: center;
+        
+            border-top: 1px solid grey;
+    
+    
+            img {
+                width: 18px;
+                padding: 0 5px;
+            }
+        }
+
+        .set-c:hover {
+            cursor: pointer;
+            background-color: #eeeef1;
+            border-radius: 2px;
+        }
+    }
+    
+    
+    
+    .file-shared {
+        width: 95%;
+        margin: 0 auto;
+        border-top: 2px solid grey;
+    }
+
+}
