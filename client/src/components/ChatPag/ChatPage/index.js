@@ -8,44 +8,55 @@ import {Link} from "react-router-dom";
 import getSocketInstance from '../../socket'
 // import SocketIOClient from '../../socket';
 // import socket from '../../socket';
+
 const cookies = new Cookies();
-
-
 const socket = getSocketInstance()
 
-// const socket = SocketIOClient();
-// const sock = socket;
 export default class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.onLogout = this.onLogout.bind(this);
     this.state = {
       email: cookies.get('user'),
-      password: cookies.get('pass'),
       isLogin: cookies.get('isLogin'),
-      authOK: true,
+      authOK: null,
       profile: {}
     }
   }
 
+  shouldComponentUpdate (nextState) {
+    console.log('chatpage should update')
+    if ((this.state.authOK == false) || (this.state.authOK == true))  return true 
+    // if (this.state.authOK == false ) return true
+  }
 
+  shouldComponentDidMount() {
+    console.log('chatpage should did mount')
+  }
+
+  componentDidMount () {
+    console.log('chatpage did mount')
+  }
 
   componentWillMount = async () => {
+    console.log('chatpage will mount')
     this.checkAuth(this.state.email);
-    socket.emit("list-online", this.state.email);
     this.getUserProfile();
+    socket.emit("list-online", this.state.email);
+    
   }
 
   checkAuth = async (user) => {
+    console.log('chatpage check auth')
+
     var auth = 0;
     const account_login = {
       email: user
     }
-    console.log("account_login" + JSON.stringify(account_login));
     await axios.post("http://localhost:8000/checklogin", account_login)
       .then(response => {
         if (response.status === 200) {
-          console.log("Client: Da Login");
+          console.log('chatpage check auth thanh cong',account_login)
           auth = 1;
           this.setState({ authOK: true })
         }
@@ -58,6 +69,8 @@ export default class Chat extends React.Component {
   }
 
   getUserProfile = async () => {
+    console.log('chatpage get user profile')
+
     var user = {
         email: this.state.email
     };
@@ -65,6 +78,7 @@ export default class Chat extends React.Component {
     await axios.post("http://localhost:8000/user", user)
         .then(response => {
             this.setState({ profile: response.data[0] })
+            console.log('chatpage get inf thanh cong', this.state.profile)
         })
         .catch(error => {
             console.log(error);
@@ -95,6 +109,7 @@ export default class Chat extends React.Component {
   }
 
   render() {
+    console.log('load chatpage', this.state.authOK)
     if (this.state.authOK === true)
       return (
         <div className="chat-page">
@@ -103,7 +118,8 @@ export default class Chat extends React.Component {
           </Link>
           <button className="button-logout" onClick={this.onLogout}>
           <img src='./logout.svg' /></button>
-          <Messenger/>
+          <Messenger
+          />
 
         </div>
       );

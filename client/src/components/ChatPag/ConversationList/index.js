@@ -12,16 +12,23 @@ import './ConversationList.css';
 const cookies = new Cookies();
 
 export default function ConversationList(props) {
-  const [currentUser, setCurrentUser] = useState();
+  // const conversations = props.conversations;
   const [conversations, setConversations] = useState([]);
+  const currentUser = props.currentUser;
+  const loadPage = props.loadPage;
+  const setCurrentUser = props.setCurrentUser;                          //update
+  const setLoadPage = props.setLoadPage;                                //update
+  const getMessages = props.getMessages;
+  console.log('load conversation-list', conversations)
   useEffect(() => {
-    getConversations()
+    getConversations();
   }, [])
 
   const getConversations = async () => {
     var user = {
       email: cookies.get('user')
     }
+    console.log('load conversation-list list user')
     await axios.post('http://localhost:8000/listuser', user)
       .then(response => {
         let newConversations = response.data.map(result => {
@@ -38,15 +45,16 @@ export default function ConversationList(props) {
         console.log(error)
       })
   }
-
-  console.log('load page')
-  function handleClick(user, fullname) {
+  async function handleClick(user, fullname, avt) {
     cookies.set('currentUser', user)
     cookies.set('currentUserFullname', fullname)
-    console.log('You clicked submit.');
+    cookies.set('avt', avt)
+    await getMessages(cookies.get('user'),user)
+    await setLoadPage(true)                                           //update
+    await setCurrentUser(user)                                                //update
+    console.log('You clicked ', currentUser, loadPage);
 
   }
-  console.log('us', currentUser)
   return (
     <div>
       <div className="conversation-list">
@@ -69,26 +77,21 @@ export default function ConversationList(props) {
               return (
                 <div className="current-user">
                   <ConversationListItem
-                  key={conversation.name}
-                  data={conversation}
-                /></div>
+                    key={conversation.name}
+                    data={conversation}
+                  /></div>
               )
             }
             else return (
-              <div onClick={e => handleClick(conversation.email, conversation.name)}>
+              <div onClick={e => handleClick(conversation.email, conversation.name, conversation.photo)}>
                 <ConversationListItem
                   key={conversation.name}
                   data={conversation}
-                  />
+                />
               </div>
-                )
-          }
-
-                )
+            )})
         }
-              </div>
+      </div>
     </div>
-      );
+  );
 }
-
-      {/* <div onClick={e => handleClick(conversation.email)}> */}

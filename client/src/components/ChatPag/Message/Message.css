@@ -32,14 +32,38 @@
   /* margin-bottom: 10px; */
 }
 
+
 .message.mine.start .bubble-container .bubble {
   margin-top: 10px;
   border-top-right-radius: 20px;
 }
 
+
 .message.mine.end .bubble-container .bubble {
   border-bottom-right-radius: 20px;
   margin-bottom: 10px;
+}
+
+.avt-message.mine.end, .avt-message.mine{
+  display: none;
+}
+
+.avt-message img{
+  display: none;
+}
+
+.avt-message {
+  width: 35px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.avt-message.end img{
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  object-fit: cover;
 }
 
 .message .bubble-container .bubble {
@@ -48,8 +72,8 @@
   padding: 10px 15px;
   border-radius: 20px;
   max-width: 75%;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
 }
@@ -59,6 +83,6 @@
   color: white;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

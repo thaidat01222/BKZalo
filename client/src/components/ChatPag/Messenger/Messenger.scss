@@ -23,23 +23,23 @@
   position: absolute;
   overflow-y: hidden;
   height: calc(100vh - 139px);
-  width: 23vw;  
+  width: calc(100% - 2px);  
 
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
   .conversation-list-items:hover::-webkit-scrollbar-thumb {
-    background-color: rgb(206, 206, 206);
+    background-color: rgb(177, 177, 177);
   }
   
   .conversation-list-items:hover::-webkit-scrollbar {
-    width: 10px;
-    background-color: rgba(235, 235, 235, 0.699);
+    width: 7px;
+    background-color: rgba(235, 235, 235, 0);
     border-radius: 8px;
   } 
   
   .conversation-list-items::-webkit-scrollbar {
-      width: 10px;
+      width: 7px;
       background-color: rgba(245, 222, 179, 0);
       border-radius: 8px;
     }

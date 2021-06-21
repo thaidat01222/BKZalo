@@ -14,13 +14,17 @@ export default class UserProfile extends React.Component {
         this.handleChangeFullname = this.handleChangeFullname.bind(this);
         this.handleChangeAge = this.handleChangeAge.bind(this);
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
-        this.handleChangeSysnopsis = this.handleChangeSysnopsis.bind(this);
+        this.handleChangeSynopsis = this.handleChangeSynopsis.bind(this);
         this.handleChangePhonenumber = this.handleChangePhonenumber.bind(this);
-
+        this.onSubmitProfile = this.onSubmitProfile.bind(this);
 
         this.state = {
             user: cookies.get('user'),
-            profile: {}
+            fullName: '',
+            age: '',
+            synopsis: '',
+            phoneNumber:'',
+            username:''
         }
     }
 
@@ -41,7 +45,7 @@ export default class UserProfile extends React.Component {
         await axios.post("http://localhost:8000/user", user)
             .then(response => {
                 console.log('user', response.data[0])
-                this.setState({ profile: response.data[0] })
+                this.setState(response.data[0] )
             })
             .catch(error => {
                 console.log(error);
@@ -57,37 +61,61 @@ export default class UserProfile extends React.Component {
         this.setState({ age: e.target.value })
     }
 
-    handleChangeSysnopsis(e) {
-        this.setState({ sysnopsis: e.target.value })
+    handleChangeSynopsis(e) {
+        this.setState({ synopsis: e.target.value })
     }
 
     handleChangePhonenumber(e) {
-        this.setState({ phoneNumeber: e.target.value })
+        this.setState({ phoneNumber: e.target.value })
+        console.log('phone number', this.state.phoneNumber)
     }
 
     handleChangeUsername(e) {
         this.setState({ username: e.target.value })
     }
 
+    onSubmitProfile = async(e) =>{
+        e.preventDefault();
+        if ((this.state.fullName != '') && (this.state.username != '')) {
+            const profileEdit = {
+                email : this.state.user,
+                fullName: this.state.fullName,
+                synopsis: this.state.synopsis,
+                age: this.state.age,
+                username: this.state.username,
+                phoneNumber: this.state.phoneNumber
+            }
+            await axios.post("http://localhost:8000/updateprofile", profileEdit)
+            .then(response => {
+                console.log(response);
+                alert('You have successfully updated your information!')
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            console.log('onSubmit', profileEdit)
+        }
+
+    }
+
 
     render() {
-        console.log('render user page', this.state.profile)
         return (
             <div className="panel">
 
                 <div id="inside-panel">
                     <div className="space"></div>
-                    <img className="panel-avatar" src={`http://localhost:8000${this.state.profile.avatar}`} />
-                    <h1>{this.state.profile.fullName}</h1>
-                    <p> <input type='text' value={this.state.profile.sysnopsis} onChange={this.handleChangeSysnopsis} required/></p>
+                    <img className="panel-avatar" src={`http://localhost:8000${this.state.avatar}`} />
+                    <h1><input type='text' value={this.state.fullName} onChange={this.handleChangeFullname} required/></h1>
+                    <p className="synopsis"> <input type='text' className="synopsis-input" value={this.state.synopsis} onChange={this.handleChangeSynopsis} required/></p>
                     <ul>
-                        <li><b>Age</b><input id="age" type='text' value={this.state.profile.age} onChange={this.handleChangeAge} required/></li>
+                        <li><b>Age</b><input id="age" type='text' value={this.state.age} onChange={this.handleChangeAge} /></li>
 
-                        <li><b>Email</b><span id="email">{this.state.profile.email}</span></li>
-                        <li><b>Username</b><input id="title" type='text' value={this.state.profile.username} onChange={this.handleChangeUsername}/> </li>
-                        <li><b>Phone-number</b><input id="website" type='text' value={this.state.profile.phoneNumber} onChange={this.handleChangePhonenumber}/></li>
+                        <li><b>Email</b><span id="email">{this.state.email}</span></li>
+                        <li><b>Username</b><input id="username" type='text' value={this.state.username} onChange={this.handleChangeUsername}/> </li>
+                        <li><b>Phone-number</b><input id="phoneNumber"  value={this.state.phoneNumber} onChange={this.handleChangePhonenumber}/></li>
                     </ul>
-                    <button className="edit"><img src='./edit.svg' /></button>
+                    <button className="edit" onClick={this.onSubmitProfile}><img src='./edit.svg' /></button>
                 </div>
 
             </div>

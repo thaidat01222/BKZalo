@@ -55,6 +55,7 @@ export default class Login extends React.Component {
                 console.log('abc', user, response.data)
                 cookies.set('currentUser', response.data[0].email, { path: '/' });
                 cookies.set('currentUserFullname', response.data[0].fullName, { path: '/' });
+                cookies.set('avt', 'http://localhost:8000' + response.data[0].avatar)
             })
             .catch(error => {
                 console.log(error)

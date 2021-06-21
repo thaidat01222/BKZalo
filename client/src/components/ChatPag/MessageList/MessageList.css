@@ -8,7 +8,7 @@
 .message-list-container{
   padding: 10px;
   height: calc( 100vh - 165px);
-  width: calc( 100% - 20px);
+  width: calc( 100% - 22px);
 
   position: absolute;
   overflow-y: scroll;
@@ -16,17 +16,17 @@
 }
 
 .message-list-container:hover::-webkit-scrollbar-thumb {
-  background-color: rgb(206, 206, 206);
+  background-color: rgb(177, 177, 177);
 }
 
 .message-list-container:hover::-webkit-scrollbar {
-  width: 10px;
-  background-color: rgba(235, 235, 235, 0.699);
+  width: 7px;
+  background-color: rgba(235, 235, 235, 0);
   border-radius: 8px;
 } 
 
 .message-list-container::-webkit-scrollbar {
-    width: 10px;
+    width: 7px;
     background-color: rgba(211, 211, 211, 0);
     border-radius: 8px;
   }

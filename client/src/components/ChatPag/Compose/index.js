@@ -14,9 +14,11 @@ export default class Compose extends React.Component {
   constructor(props) {
     super(props);
     this.handleTyping = this.handleTyping.bind(this);
+    this.handleSend = this.props.handleSend;
     this.state = {
       typing: '',
-      getMesss: ''
+      getMesss: '',
+      handleSend : props.handleSend
     }
   }
 
@@ -34,33 +36,39 @@ export default class Compose extends React.Component {
   handleTyping = (e) => {
     this.setState({ typing: e.target.value })
     console.log("typing", this.state.typing)
+    e.preventDefault();
   }
-  handleSend = (e) => {
-    
-    const message = {
-      fromEmail: cookies.get('user'),
-      toEmail: cookies.get('currentUser'),
-      content: this.state.typing,
-      contentType: 'text',
-      sentTime: ''
-    }
-    // socket.emit("sendData",message);
-    console.log("Client: message send: " + JSON.stringify(message));
-    axios.post("http://localhost:8000/sendmessage", message)
-      .then(response => {
-        if (response.status === 200) {
-        }
-        // if(response.status === 401) {
-        //     alert("Client: Sai thong tin");
-        //   
-        // }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-      e.preventDefault();
-  }
+
+  // handleSend = (e) => {
+  //   if (this.state.typing !== '') {
+  //     const message = {
+  //       fromEmail: cookies.get('user'),
+  //       toEmail: cookies.get('currentUser'),
+  //       content: this.state.typing,
+  //       contentType: 'text',
+  //       sentTime: ''
+  //     }
+  //     // this.props.onChangeIsLoad()
+  //     // socket.emit("sendData",message);
+  //     console.log("Client: message send: " + JSON.stringify(message));
+  //     axios.post("http://localhost:8000/sendmessage", message)
+  //       .then(response => {
+  //         if (response.status === 200) {
+  //         }
+  //         // if(response.status === 401) {
+  //         //     alert("Client: Sai thong tin");
+  //         //   
+  //         // }
+  //       })
+  //       .catch(error => {
+  //         console.log(error);
+  //       });
+  //       this.setState({ typing: ''})
+  //     e.preventDefault();
+  //   }
+  
   render() {
+    console.log('load compose')
     return (
       <div className="compose">
         <img src='./plus2.svg' />
@@ -71,7 +79,7 @@ export default class Compose extends React.Component {
           value={this.state.typing}
           onChange={this.handleTyping}
         />
-        <button onClick={this.handleSend}><img src='./send2.svg' /></button>
+        <button onClick={e => {this.handleSend(this.state.typing); this.setState({ typing: ''})}}><img src='./send2.svg' /></button>
       </div>
     );
   }
