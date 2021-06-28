@@ -1,10 +1,10 @@
 .messenger {
   display: flex;
-  width: 100%;
   height: calc(100vh - 45px);
-  min-height: 450px;
   background: #eeeef1;
 
+  position: relative;
+  overflow-x: hidden;
 
 }
 
@@ -18,42 +18,11 @@
     color: black;
   }
 
-
-.conversation-list-items{
-  position: absolute;
-  overflow-y: hidden;
-  height: calc(100vh - 139px);
-  width: calc(100% - 2px);  
-
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-  .conversation-list-items:hover::-webkit-scrollbar-thumb {
-    background-color: rgb(177, 177, 177);
-  }
-  
-  .conversation-list-items:hover::-webkit-scrollbar {
-    width: 7px;
-    background-color: rgba(235, 235, 235, 0);
-    border-radius: 8px;
-  } 
-  
-  .conversation-list-items::-webkit-scrollbar {
-      width: 7px;
-      background-color: rgba(245, 222, 179, 0);
-      border-radius: 8px;
-    }
-  
-  .conversation-list-items::-webkit-scrollbar-thumb {    
-      background-color: rgba(255, 255, 255, 0);
-      border-radius: 5px;
-  } 
-
 .sidebar {
   position: relative;
   background: white;
   width: 23vw;
-  min-height: 450px;
+  min-width: 170px;
   border-right: 1px solid rgb(190, 190, 190);
 }
 
@@ -61,7 +30,7 @@
   position: relative;
   background: white;
   width: 77vw;
-  min-height: 450px;
+  // min-width: 460px;
   height: calc(100vh - 45px);
   overflow: hidden;
 }

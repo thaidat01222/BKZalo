@@ -20,7 +20,6 @@ export default class App extends React.Component {
                 <Route path='/chat' component={Chat} />
                 <Route exact path={'/'} component={Footer} />
                 <Route exact path={'/user'} component={Footer} />
-
             </BrowserRouter>
         )
     }

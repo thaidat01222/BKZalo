@@ -33,7 +33,6 @@ export default class Login extends React.Component {
 
     shouldComponentUpdate(nextState) {
         console.log("shouldComponentUpdate", (this.state.redirect !== false))
-        // if ((nextState.redirect !== this.state.redirect)) return true;
         if ((this.state.button === true) || (this.state.redirect === true)) return true;
         else if ((nextState.typingE !== this.state.typingE) || (nextState.typingP !== this.state.typingP))
             return false;
@@ -47,14 +46,14 @@ export default class Login extends React.Component {
     }
 
     getMess = async (e) => {
+        console.log('add curent')
         const user = {
             email: e
         }
         await axios.post('http://localhost:8000/listuser', user)
             .then(response => {
-                console.log('abc', user, response.data)
-                cookies.set('currentUser', response.data[0].email, { path: '/' });
-                cookies.set('currentUserFullname', response.data[0].fullName, { path: '/' });
+                cookies.set('currentUser', response.data[0].email);
+                cookies.set('currentUserFullname', response.data[0].fullName);
                 cookies.set('avt', 'http://localhost:8000' + response.data[0].avatar)
             })
             .catch(error => {
@@ -67,8 +66,8 @@ export default class Login extends React.Component {
         const account_login = {
             email: user,
             password: pass
-        }
-        console.log("account_login" + JSON.stringify(account_login));
+        }            
+        await this.getMess(user)
         await axios.post("http://localhost:8000/login", account_login)
             .then(response => {
                 if (response.status === 200) {
@@ -89,6 +88,7 @@ export default class Login extends React.Component {
             .catch(error => {
                 console.log(error);
             });
+
     }
 
 
@@ -103,7 +103,6 @@ export default class Login extends React.Component {
 
     handleEmailChanges(e) {
         this.setState({ typingE: e.target.value })
-        console.log("this.state.email", this.state.typingE)
     }
 
     handlePasswordChanges(e) {
@@ -114,13 +113,13 @@ export default class Login extends React.Component {
         this.setState({ username: e.target.value })
     }
 
-    async handleSubmitLogin(e) {
+    handleSubmitLogin(e) {
         e.preventDefault();
         this.setState({ email: this.state.typingE });
         this.setState({ password: this.state.typingP })
         this.setState({ button: true })
-        cookies.set('user', this.state.typingE, { path: '/' });
-        cookies.set('pass', this.state.typingP, { path: '/' });
+        cookies.set('user', this.state.typingE);
+        cookies.set('pass', this.state.typingP);
         this.getMess(this.state.typingE)
         this.login(this.state.typingE, this.state.typingP);
     }

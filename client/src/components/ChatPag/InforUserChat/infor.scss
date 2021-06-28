@@ -1,15 +1,36 @@
 .board {
     position: absolute;
-    top: 45px;
-    right: 0px;
     display: flex;
     height: calc(100vh - 46px);
     min-height: 450px;
     width: 24vw;
+    min-width: 215px;
     flex-direction: column;
     background-color: white;
     
+    overflow-y: scroll;
 }
+
+.board:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(177, 177, 177);
+  }
+  
+  .board:hover::-webkit-scrollbar {
+    width: 7px;
+    background-color: rgba(235, 235, 235, 0);
+    border-radius: 8px;
+  } 
+  
+  .board::-webkit-scrollbar {
+      width: 7px;
+      background-color: rgba(245, 222, 179, 0);
+      border-radius: 8px;
+    }
+  
+    .board ::-webkit-scrollbar-thumb {    
+      background-color: rgba(255, 255, 255, 0);
+      border-radius: 5px;
+  } 
 .user-profil {
     right: 0px;
     display: flex;
@@ -45,13 +66,21 @@
         }
     
         h3 {
-            margin: 0;
+            margin: 0 5px;
         }
         
         .active {
             margin-top: 5px;
             font-size: 12px;
             font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        .profile-user-name {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
         }
     }
     

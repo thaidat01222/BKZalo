@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import Messenger from '../Messenger';
 import { io } from 'socket.io-client';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import getSocketInstance from '../../socket'
 // import SocketIOClient from '../../socket';
 // import socket from '../../socket';
@@ -19,14 +19,20 @@ export default class Chat extends React.Component {
     this.state = {
       email: cookies.get('user'),
       isLogin: cookies.get('isLogin'),
+      currentUser: cookies.get('currentUser'),
       authOK: null,
-      profile: {}
+      profile: {},
+      isLoad: false,
+      messages: []
     }
   }
 
-  shouldComponentUpdate (nextState) {
-    console.log('chatpage should update')
-    if ((this.state.authOK == false) || (this.state.authOK == true))  return true 
+  shouldComponentUpdate() {
+    console.log('chatpage should update', this.state.authOK)
+    if ((this.state.authOK == false) 
+    || (this.state.authOK == true)
+    // || (this.state.isLoad == true)
+    ) return true
     // if (this.state.authOK == false ) return true
   }
 
@@ -34,15 +40,20 @@ export default class Chat extends React.Component {
     console.log('chatpage should did mount')
   }
 
-  componentDidMount () {
+  componentDidMount() {
     console.log('chatpage did mount')
+    this.setState({ isLoad: false})
   }
 
   componentWillMount = async () => {
-    console.log('chatpage will mount')
+    console.log('chatpage will mount', cookies.get('currentUser'), cookies.get('user'))
     this.checkAuth(this.state.email);
     this.getUserProfile();
     socket.emit("list-online", this.state.email);
+  }
+
+  componentDidUpdate = async() => {
+    console.log('chatpage did update')
     
   }
 
@@ -56,9 +67,10 @@ export default class Chat extends React.Component {
     await axios.post("http://localhost:8000/checklogin", account_login)
       .then(response => {
         if (response.status === 200) {
-          console.log('chatpage check auth thanh cong',account_login)
+          console.log('chatpage check auth thanh cong', account_login)
           auth = 1;
           this.setState({ authOK: true })
+          console.log('set auth', this.state.authOK)
         }
       })
       .catch(error => {
@@ -66,23 +78,24 @@ export default class Chat extends React.Component {
       });
 
     if (auth === 0) this.setState({ authOK: false })
+    await this.setState({ isLoad: true})
   }
 
   getUserProfile = async () => {
     console.log('chatpage get user profile')
 
     var user = {
-        email: this.state.email
+      email: this.state.email
     };
 
     await axios.post("http://localhost:8000/user", user)
-        .then(response => {
-            this.setState({ profile: response.data[0] })
-            console.log('chatpage get inf thanh cong', this.state.profile)
-        })
-        .catch(error => {
-            console.log(error);
-        });
+      .then(response => {
+        this.setState({ profile: response.data[0] })
+        console.log('chatpage get inf thanh cong', this.state.profile)
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   logout = async () => {
@@ -103,28 +116,35 @@ export default class Chat extends React.Component {
 
   onLogout() {
     this.logout()
-    cookies.set('user', '')
-    cookies.set('pass', '')
-    cookies.set('isLogin', '')
+    cookies.remove('user')
+    cookies.remove('pass')
+    cookies.remove('isLogin')
+    cookies.remove('currentUser')
+    cookies.remove('currentUserFullname')
+    cookies.remove('avt')
   }
 
   render() {
     console.log('load chatpage', this.state.authOK)
-    if (this.state.authOK === true)
-      return (
-        <div className="chat-page">
-          <Link to='/user' className="user-avt" >
-            <img src={`http://localhost:8000${this.state.profile.avatar}`}/>
-          </Link>
-          <button className="button-logout" onClick={this.onLogout}>
-          <img src='./logout.svg' /></button>
-          <Messenger
-          />
+    if (this.state.isLoad == true) {
+      if (this.state.authOK === true)
+        return (
+          <div className="chat-page">
+            <Link to='/user' className="user-avt" >
+              <img src={`http://localhost:8000${this.state.profile.avatar}`} />
+            </Link>
+            <button className="button-logout" onClick={this.onLogout}>
+              <img src='./logout.svg' /></button>
+            <Messenger
+              currentUser = { this.state.currentUser }
+			  user = { this.state.email }
+            />
 
-        </div>
-      );
-    else if (this.state.authOK === false) {
-      return (<Redirect to='/' />)
+          </div>
+        );
+      else if (this.state.authOK === false) {
+        return (<Redirect to='/' />)
+      }
     }
     else return (
       <div>Loadding page</div>

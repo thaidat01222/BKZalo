@@ -9,20 +9,16 @@ export default function InforUserChat(props) {
     const [profile, setProfile] = useState([]);
     const currentUser = props.currentUser;
     const loadPage = props.loadPage;
-    const isLoad = 0;
+    
     useEffect(() => {
-        console.log('infor page', props.loadPage)
         getUserProfile();
-        return ( )=> {
-            console.log('info un mount')
-        }
     }, [currentUser])
 
     const getUserProfile = async () => {
         console.log('get infor user')
         var getUser = {
             email: cookies.get('user'),
-            currentEmail: currentUser
+            currentEmail: cookies.get('currentUser')
         };
         await axios.post("http://localhost:8000/userpartner", getUser)
             .then(response => {
@@ -34,7 +30,6 @@ export default function InforUserChat(props) {
                 console.log(error);
             });
     }
-    console.log('loadpage infor', profile.fullName, loadPage, currentUser)
     return (
         <div className="board">
             <div className="user-profil">
@@ -52,24 +47,24 @@ export default function InforUserChat(props) {
                 <div className="setting-chat">
                     <div className="set-c mute-conversation">
                         <img src='./noti-chat.svg' />
-                            Mute conversation
-                        </div>
+                        Mute conversation
+                    </div>
                     <div className="set-c ignore">
                         <img src='./stop.svg' />
-                            Ignore message
-                        </div>
+                        Ignore message
+                    </div>
                     <div className="set-c block">
                         <img src='./block.svg' />
-                            Block
-                        </div>
+                        Block
+                    </div>
                     <div className="set-c report">
                         <img src='./warning.svg' />
-                            Something's wrong
-                        </div>
+                        Something's wrong
+                    </div>
                 </div>
                 <div className="file-shared">
                     File shared
-                    </div>
+                </div>
             </div>
         </div>
     )

@@ -3,12 +3,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom';
 import App from './App';
+
 ReactDOM.render(
-  <BrowserRouter>
-    <CookiesProvider>
-      <App />
-    </CookiesProvider>
-  </BrowserRouter>,
+    <BrowserRouter>
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 

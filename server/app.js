@@ -5,10 +5,8 @@ const port = process.env.PORT || 8000;
 const bodyParser = require('body-parser');
 const path = require('path');
 const api = require('./api/api')
-const socket = require('./api/socket');
+const socket = require('./api/socket.utils');
 
-
-var socketEmailMap = new Map();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -461,7 +459,9 @@ socket.socket(io);
 // function emitMessage(message) {
 //     var toEmail = message.toEmail
 //     var socketList = getKeyByValue(socketEmailMap, toEmail) //[1,5]
-//     var clientConnectedList = findClientsSocket(); //1,2,3,4,5,6,7,8,9,10...
+//     console.log('SocketLIST : ', socketList);
+//     // var clientConnectedList = findClientsSocket(); //1,2,3,4,5,6,7,8,9,10...
+//     // console.log("findCLIENTSOCKET", clientConnectedList);
 //     console.log("Socket: list user online "+socketList)
 //     socketList.forEach(element => {
 //         if (socketList.includes(element)) {
