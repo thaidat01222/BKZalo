@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ConversationSearch from '../ConversationSearch';
 import ConversationListItem from '../ConversationListItem';
+import InputNewChat from './input'
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import axios from 'axios';
@@ -61,8 +62,8 @@ export default function ConversationList(props) {
 		setSearch(e.target.value);
 		console.log('handle change search', search)
 	}
-
-	return (
+	console.log('new chat', props.newChat)
+	return (	
 		<div>
 			<div className="conversation-list">
 				<Toolbar
@@ -71,8 +72,11 @@ export default function ConversationList(props) {
 						<ToolbarButton key="cog" icon="settings" />
 					]}
 					rightItems={[
-						<ToolbarButton key="add" icon="plus-circle" />
+						<ToolbarButton key="add" icon="plus-circle" className="new-chat"/>
 					]}
+				/>
+				<InputNewChat 
+					newChat={props.newChat}
 				/>
 				{/* <ConversationSearch
           				handleChangeSerach={handleChangeSearch}

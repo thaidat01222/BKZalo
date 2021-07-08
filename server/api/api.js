@@ -5,6 +5,7 @@ const user_service = require('../services/user.service');
 const message_model = require('../models/message.model');
 const message_service = require('../services/message.service');
 
+
 exports.registerEndpoint = (app) => {
     app.post('/login',login_service.login); //OK
         
@@ -26,6 +27,8 @@ exports.registerEndpoint = (app) => {
 
     app.post('/updateprofile', user_service.updateProfile); //OK
 
-    app.post('/sendmessage', message_service.sendMessage); 
+    app.post('/sendmessage', message_service.sendMessage); //OK
+
+    app.post('/newchat', user_service.newChat);
 }
 

@@ -22,7 +22,8 @@ export default class Messenger extends React.Component {
 			button: false,
 			loadPage: false,
 			messages: [],
-			index: 0
+			index: 0,
+			newChat: []
 		}
 	}
 
@@ -52,6 +53,28 @@ export default class Messenger extends React.Component {
 	componentWillMount = () => {
 		console.log('load messenger will mount')
 		this.getMessages(this.props.user, this.props.currentUser);
+		this.getNewChat();
+	}
+
+	getNewChat = async () => {
+		const e = {
+			email: this.state.user
+		}
+		await axios.post('http://localhost:8000/newchat', e)
+			.then(response => {
+				console.log('get ne', response)
+				let temp = response.data.map((result) => {
+					return {
+						email: result.email,
+						fullName: result.fullName
+					};
+				});
+				this.setState({ newChat: temp})
+				console.log("get new chat", this.state.newChat)
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	}
 
 	updateMess = async (e) => {
@@ -149,6 +172,7 @@ export default class Messenger extends React.Component {
 						loadPage={this.state.loadPage}
 						setLoadPage={this.setLoadPage}
 						getMessages={this.getMessages}
+						newChat={this.state.newChat}
 					/>
 				</div>
 

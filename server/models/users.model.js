@@ -1,5 +1,17 @@
 const db = require('./database');
 const message_model = require('./message.model');
+
+exports.getAllEMail = async () =>{
+    let sql = `SELECT (email), (fullName) FROM users WHERE 1 = 1`;
+    console.log('getAllEMail ', sql);
+    try{
+        const [results, field] = await db.query(sql);
+        return results;
+    }catch(err){
+        console.log(err);
+    }
+}
+
 exports.getUserByEmail = async (email) => {
     let sql = `SELECT * FROM users WHERE email = '${email}'`;
     console.log('getUserByEmail: ', sql)
@@ -123,7 +135,7 @@ exports.signup = async (account) => {
 }
 
 exports.updateProfile = async (account) => {
-    let sql = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}' WHERE email = '${account.email}'`;
+    let sql = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}', avatar = '${account.avatar}' WHERE email = '${account.email}'`;
     try {
         const [results, field] = await db.query(sql);
     } catch (err) {

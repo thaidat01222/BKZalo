@@ -20,13 +20,14 @@ export default class UserProfile extends React.Component {
         this.onSubmitProfile = this.onSubmitProfile.bind(this);
 
         this.state = {
+            id: '',
             user: cookies.get('user'),
             fullName: '',
             age: '',
             synopsis: '',
             phoneNumber: '',
             username: '',
-            avatar:''
+            avatar: null
         }
         this.inputOpenFileRef = React.createRef()
     }
@@ -47,8 +48,9 @@ export default class UserProfile extends React.Component {
 
         await axios.post("http://localhost:8000/user", user)
             .then(response => {
-                
+
                 const profile = {
+                    id: response.data[0].id,
                     email: response.data[0].user,
                     fullName: response.data[0].fullName,
                     synopsis: response.data[0].synopsis,
@@ -86,22 +88,26 @@ export default class UserProfile extends React.Component {
     handleChangeUsername(e) {
         this.setState({ username: e.target.value })
     }
-    
+
     handleChangeImage = (e) => {
         const reader = new FileReader();
-        reader.onload = () =>{
-          if(reader.readyState === 2){
-            this.setState({avatar: reader.result})
-          }
+        const image = new FormData();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                this.setState({ avatar: reader.result })
+            }
         }
-        // reader.readAsDataURL(e.target.files[0])
-        console.log('his his',reader.readAsDataURL(e.target.files[0]));
-      };
+        reader.readAsDataURL(e.target.files[0])
+        image.append('avatar', this.state.avatar);
+        image.append('name', this.state.id);
+        console.log('haha', image);
+    };
 
     onSubmitProfile = async (e) => {
         e.preventDefault();
         if ((this.state.fullName != '') && (this.state.username != '')) {
             const profileEdit = {
+                id: this.state.id,
                 email: this.state.user,
                 fullName: this.state.fullName,
                 synopsis: this.state.synopsis,
@@ -128,7 +134,7 @@ export default class UserProfile extends React.Component {
         console.log('upload', this.inputOpenFileRef)
     }
 
-    
+
 
     render() {
         const picture = this.state.avatar;
@@ -139,8 +145,7 @@ export default class UserProfile extends React.Component {
                     <div className="space"></div>
                     <div className="panel-avatar">
                         <img className="avatar" src={picture} />
-                        <input ref={this.inputOpenFileRef} type="file" style={{ display: "none" }} accept="image/*"
-                        onChange={this.handleChangeImage}
+                        <input ref={this.inputOpenFileRef} type="file" style={{ display: "none" }} name="myImage" accept="image/*" onChange={this.handleChangeImage}
                         />
                         <button onClick={this.showOpenFileDlg}><img src='./photo-camera.svg' /></button>
                     </div>
