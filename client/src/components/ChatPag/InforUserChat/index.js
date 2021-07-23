@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import './infor.scss';
-import { Cookies } from 'react-cookie';
 import axios from 'axios';
+import { Cookies } from 'react-cookie';
 
+import './infor.scss';
 
 const cookies = new Cookies();
+
 export default function InforUserChat(props) {
     const [profile, setProfile] = useState([]);
+    const [fileShare, setFileShare] = useState([]);
     const currentUser = props.currentUser;
     const loadPage = props.loadPage;
-    
+
     useEffect(() => {
         getUserProfile();
+        getFileShare();
     }, [currentUser])
 
     const getUserProfile = async () => {
-        console.log('get infor user')
         var getUser = {
             email: cookies.get('user'),
             currentEmail: cookies.get('currentUser')
         };
         await axios.post("http://localhost:8000/userpartner", getUser)
             .then(response => {
-                console.log('user in infor currentU', response)
                 let newData = response.data[0];
                 setProfile(newData)
             })
@@ -30,6 +31,23 @@ export default function InforUserChat(props) {
                 console.log(error);
             });
     }
+
+    const getFileShare = async () => {
+        var getFile = {
+            fromEmail: cookies.get('user'),
+            toEmail: cookies.get('currentUser')
+        };
+
+        await axios.post("http://localhost:8000/imageshared", getFile)
+            .then(response => {
+                let newData = response.data;
+                setFileShare(newData);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     return (
         <div className="board">
             <div className="user-profil">
@@ -63,7 +81,16 @@ export default function InforUserChat(props) {
                     </div>
                 </div>
                 <div className="file-shared">
-                    File shared
+                    <b>File shared</b>
+                    <div className='file-shares' >
+                        {fileShare.map(file => {
+                            return (
+                                <div className="file-share">
+                                    <img className="image-share" src={`http://localhost:8000${file.image}`} />
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
         </div>

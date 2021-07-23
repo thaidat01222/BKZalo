@@ -1,8 +1,8 @@
 import React from 'react';
-import './userprofile.scss';
-import { Cookies } from 'react-cookie';
 import axios from 'axios';
+import { Cookies } from 'react-cookie';
 
+import './userprofile.scss';
 
 
 const cookies = new Cookies();
@@ -10,7 +10,6 @@ const cookies = new Cookies();
 export default class UserProfile extends React.Component {
     constructor(props) {
         super(props);
-
         this.handleChangeFullname = this.handleChangeFullname.bind(this);
         this.handleChangeAge = this.handleChangeAge.bind(this);
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -27,29 +26,25 @@ export default class UserProfile extends React.Component {
             synopsis: '',
             phoneNumber: '',
             username: '',
-            avatar: null
-        }
-        this.inputOpenFileRef = React.createRef()
+            avatar: null,
+            avt: ''
+        };
+
+        this.inputOpenFileRef = React.createRef();
     }
 
-    // shouldComponentUpdate() {
-    //     console.log('should component did mount')
-    // }
-
     componentDidMount = async () => {
-        console.log('will mount')
-        this.getUserProfile()
+        this.getUserProfile();
     }
 
     getUserProfile = async () => {
-        var user = {
+        let user = {
             email: this.state.user
         };
 
         await axios.post("http://localhost:8000/user", user)
             .then(response => {
-
-                const profile = {
+                let profile = {
                     id: response.data[0].id,
                     email: response.data[0].user,
                     fullName: response.data[0].fullName,
@@ -57,84 +52,97 @@ export default class UserProfile extends React.Component {
                     age: response.data[0].age,
                     username: response.data[0].username,
                     phoneNumber: response.data[0].phoneNumber,
-                    avatar: 'http://localhost:8000' + response.data[0].avatar
+                    avatar: 'http://localhost:8000' + response.data[0].avatar,
+                    avt: response.data[0].avatar
                 }
-                this.setState(profile)
-                console.log('user', profile)
+                this.setState(profile);
             })
             .catch(error => {
                 console.log(error);
             });
-        console.log('this state', this.state)
     }
 
     handleChangeFullname(e) {
-        this.setState({ fullName: e.target.value })
+        this.setState({ fullName: e.target.value });
     }
 
     handleChangeAge(e) {
-        this.setState({ age: e.target.value })
+        this.setState({ age: e.target.value });
     }
 
     handleChangeSynopsis(e) {
-        this.setState({ synopsis: e.target.value })
+        this.setState({ synopsis: e.target.value });
     }
 
     handleChangePhonenumber(e) {
-        this.setState({ phoneNumber: e.target.value })
-        console.log('phone number', this.state.phoneNumber)
+        this.setState({ phoneNumber: e.target.value });
     }
 
     handleChangeUsername(e) {
-        this.setState({ username: e.target.value })
+        this.setState({ username: e.target.value });
     }
 
     handleChangeImage = (e) => {
-        const reader = new FileReader();
-        const image = new FormData();
+        let reader = new FileReader();
         reader.onload = () => {
             if (reader.readyState === 2) {
-                this.setState({ avatar: reader.result })
+                this.setState({ avatar: reader.result });
             }
         }
-        reader.readAsDataURL(e.target.files[0])
-        image.append('avatar', this.state.avatar);
-        image.append('name', this.state.id);
-        console.log('haha', image);
+        reader.readAsDataURL(e.target.files[0]);
     };
 
     onSubmitProfile = async (e) => {
         e.preventDefault();
-        if ((this.state.fullName != '') && (this.state.username != '')) {
-            const profileEdit = {
-                id: this.state.id,
-                email: this.state.user,
-                fullName: this.state.fullName,
-                synopsis: this.state.synopsis,
-                age: this.state.age,
-                username: this.state.username,
-                phoneNumber: this.state.phoneNumber,
-                avatar: this.state.avatar
+        if ((this.state.fullName !== '') && (this.state.username !== '')) {
+            console.log('test', this.state.avt, this.state.avatar.slice(21))
+            if (this.state.avt === this.state.avatar.slice(21)) {
+                let profileEdit = {
+                    id: this.state.id,
+                    avatar: this.state.avt,
+                    email: this.state.user,
+                    fullName: this.state.fullName,
+                    synopsis: this.state.synopsis,
+                    age: this.state.age,
+                    username: this.state.username,
+                    phoneNumber: this.state.phoneNumber
+                };
+                console.log('test 2', profileEdit)
+                await axios.post("http://localhost:8000/updateprofile", profileEdit)
+                    .then(response => {
+                        console.log(response);
+                        alert('You have successfully updated your information!')
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            } else {
+                let profileEdit = {
+                    id: this.state.id,
+                    avatar: this.state.avatar,
+                    email: this.state.user,
+                    fullName: this.state.fullName,
+                    synopsis: this.state.synopsis,
+                    age: this.state.age,
+                    username: this.state.username,
+                    phoneNumber: this.state.phoneNumber
+                };
+                console.log( profileEdit)
+                await axios.post("http://localhost:8000/updateprofile", profileEdit)
+                    .then(response => {
+                        alert('You have successfully updated your information!')
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             }
-            await axios.post("http://localhost:8000/updateprofile", profileEdit)
-                .then(response => {
-                    console.log(response);
-                    alert('You have successfully updated your information!')
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            console.log('onSubmit', profileEdit)
         }
 
     }
 
-    showOpenFileDlg = () => {
-        this.inputOpenFileRef.current.click()
-        console.log('upload', this.inputOpenFileRef)
+    showOpenFile = () => {
+        this.inputOpenFileRef.current.click();
     }
-
-
 
     render() {
         const picture = this.state.avatar;
@@ -147,7 +155,7 @@ export default class UserProfile extends React.Component {
                         <img className="avatar" src={picture} />
                         <input ref={this.inputOpenFileRef} type="file" style={{ display: "none" }} name="myImage" accept="image/*" onChange={this.handleChangeImage}
                         />
-                        <button onClick={this.showOpenFileDlg}><img src='./photo-camera.svg' /></button>
+                        <button onClick={this.showOpenFile}><img src='./photo-camera.svg' /></button>
                     </div>
                     <h1>
                         <input type='text' value={this.state.fullName} onChange={this.handleChangeFullname} required />
@@ -163,7 +171,7 @@ export default class UserProfile extends React.Component {
 
                         <li>
                             <b>Email</b>
-                            <span id="email">{this.state.email}</span>
+                            <span id="email">{this.state.user}</span>
                         </li>
                         <li>
                             <b>Username</b>
@@ -176,7 +184,6 @@ export default class UserProfile extends React.Component {
                     </ul>
                     <button className="edit" onClick={this.onSubmitProfile}><img src='./edit.svg' /></button>
                 </div>
-
             </div>
         )
     }

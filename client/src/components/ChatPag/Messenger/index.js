@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import axios from 'axios';
+import { now } from 'moment';
+
 import ConversationList from '../ConversationList';
 import MessageList from '../MessageList';
 import InforUserChat from '../InforUserChat';
 import ToolbarButton from '../ToolbarButton';
-import axios from 'axios';
 import './Messenger.scss';
-import { now } from 'moment';
-
 
 export default class Messenger extends React.Component {
 	constructor(props) {
@@ -20,38 +20,34 @@ export default class Messenger extends React.Component {
 			currentUser: this.props.currentUser,
 			user: this.props.user,
 			button: false,
+			button2: false,
 			loadPage: false,
 			messages: [],
 			index: 0,
 			newChat: []
-		}
+		};
 	}
 
 	shouldComponentUpdate(nextState) {
-		console.log('load messenger should update', this.state.loadPage)
-		if ((this.state.loadPage == true))
+		if ((this.state.loadPage === true))
 			return true;
 	}
 
 	shouldComponentDidMount() {
-		console.log('load messenger should did mount', this.state.messages)
-		if (this.state.loadPage == true) return true
+		if (this.state.loadPage === true) return true;
 	}
 
 	componentDidMount() {
-		console.log('load messenger did mount', this.state.messages)
 		this.getMessages(this.props.user, this.state.currentUser);
 	}
 
 	componentDidUpdate = async () => {
-		console.log('load messenger did update')
-		if (this.state.loadPage == true) {
-			this.setState({ loadPage: false })
+		if (this.state.loadPage === true) {
+			this.setState({ loadPage: false });
 		}
 	}
 
 	componentWillMount = () => {
-		console.log('load messenger will mount')
 		this.getMessages(this.props.user, this.props.currentUser);
 		this.getNewChat();
 	}
@@ -62,104 +58,141 @@ export default class Messenger extends React.Component {
 		}
 		await axios.post('http://localhost:8000/newchat', e)
 			.then(response => {
-				console.log('get ne', response)
 				let temp = response.data.map((result) => {
 					return {
 						email: result.email,
 						fullName: result.fullName
 					};
 				});
-				this.setState({ newChat: temp})
-				console.log("get new chat", this.state.newChat)
+				this.setState({ newChat: temp });
 			})
 			.catch(error => {
 				console.log(error);
 			});
 	}
 
-	updateMess = async (e) => {
-		const preMess = this.state.messages;
-		let me = {
-			id: this.state.index,
-			author: this.props.user,
-			message: e,
-			timestamp: now()
+	updateMess = async (content, message) => {
+		let preMess = this.state.messages;
+		if (content === "text") {
+			let me = {
+				id: this.state.index,
+				content: "text",
+				author: this.props.user,
+				message: message,
+				timestamp: now()
+			}
+			preMess.push(me);
+		} else if (content === "image") {
+			let me = {
+				id: this.state.index,
+				content: "image",
+				author: this.props.user,
+				message: message,
+				timestamp: now()
+			};
+			preMess.push(me);
 		}
-		preMess.push(me)
-		await this.setState({ index: this.state.index + 1 })
-		await this.setLoadPage(true)
+		await this.setState({ index: this.state.index + 1 });
+		await this.setLoadPage(true);
 	}
 
-	updateMessReceive = async (message) => {
-		console.log('updateMessReceive', message)
-
-		const preMess = this.state.messages;
-		let me = {
-			id: this.state.index,
-			author: this.props.currentUser,
-			message: message,
-			timestamp: now()
+	updateMessReceive = async (content, message) => {
+		let preMess = this.state.messages;
+		if (content === "text") {
+			let me = {
+				id: this.state.index,
+				content: "text",
+				author: this.props.currentUser,
+				message: message,
+				timestamp: now()
+			};
+			preMess.push(me);
+		} else if (content === "image") {
+			let me = {
+				id: this.state.index,
+				content: "image",
+				author: this.props.currentUser,
+				message: 'http://localhost:8000/' + message,
+				timestamp: now()
+			};
+			preMess.push(me);
 		}
-		preMess.push(me)
-		await this.setState({ index: this.state.index + 1 })
-
-		await this.setLoadPage(true)
-		console.log('receive', this.state.currentUser)
+		await this.setState({ index: this.state.index + 1 });
+		await this.setLoadPage(true);
 	}
 
 	getMessages = async (user1, user2) => {
-		const user = {
+		let user = {
 			fromEmail: user1,
 			toEmail: user2
-		}
-		await this.setState({ messages: [] })
+		};
+		await this.setState({ messages: [] });
 		await axios.post('http://localhost:8000/historymessage', user)
 			.then(response => {
-				const mess = response.data;
+				let mess = response.data;
 				let tempMessages = mess.map((result, index) => {
-					return {
+					if (result.contentType === "text") {
+						return {
+							id: index,
+							content: "text",
+							author: result.fromEmail,
+							message: result.content,
+							timestamp: result.sentTime
+						};
+					} else if (result.contentType === "image") return {
 						id: index,
+						content: "image",
 						author: result.fromEmail,
-						message: result.content,
+						message: "http://localhost:8000" + result.image,
 						timestamp: result.sentTime
-					};
+					}
 				});
-				this.setState({ messages: tempMessages })
-				this.setState({ index: response.data.length })
-				this.setLoadPage(true)
-				console.log("get mess thanh cong", this.state.messages, this.state.loadPage)
+				this.setState({ messages: tempMessages });
+				this.setState({ index: response.data.length });
+				this.setLoadPage(true);
 			})
 			.catch(error => {
 				console.log(error);
 			});
 	}
 	getInformation = () => {
-		console.log('get infor')
-		if (this.state.button == false) {
+		if (this.state.button === false) {
 			document.querySelector('.infor-user-chat').style.display = 'block';
 			document.querySelector('.content').style.width = '53vw';
-			this.setState({ button: true })
+			this.setState({ button: true });
 		}
 		else {
 			document.querySelector('.infor-user-chat').style.display = 'none';
 			document.querySelector('.content').style.width = '77vw';
-			this.setState({ button: false })
+			this.setState({ button: false });
 		}
 	}
 
 	handleChangeSearch(event) {
-		this.setState({})
+		this.setState({});
 	}
 
 	setCurrentUser = (user) => {
-		this.setState({ currentUser: user })
-		console.log('load messenger set current')
+		this.setState({ currentUser: user });
+	}
 
+	addChat = () => {
+		if (this.state.button2 === false) {
+			document.querySelector('.add-chat').style.display = 'block';
+			this.setState({ button2: true });
+			document.querySelector('.conversation-list-items').style.display = 'none';
+			document.querySelector('.conversation-search').style.display = 'none';
+		}
+		else {
+			document.querySelector('.add-chat').style.display = 'none';
+			this.setState({ button2: false });
+			document.querySelector('.conversation-list-items').style.display = 'block';
+			document.querySelector('.conversation-search').style.display = 'block';
+		}
 	}
 
 	setLoadPage = async (e) => {
-		await this.setState({ loadPage: e })
-		console.log('load messenger set loadpage', e)
+		await this.setState({ loadPage: e });
 	}
 
 	render() {
@@ -173,6 +206,7 @@ export default class Messenger extends React.Component {
 						setLoadPage={this.setLoadPage}
 						getMessages={this.getMessages}
 						newChat={this.state.newChat}
+						addChat={this.addChat}
 					/>
 				</div>
 

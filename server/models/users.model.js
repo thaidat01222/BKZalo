@@ -107,12 +107,31 @@ exports.userInfoInListChat = async (email, messageID) => {
     }
     let lastMess = await message_model.getMessageById(messageID);
     if (lastMess != null) {
-        listUser.lastMess = lastMess;
+        try{
+            if(lastMess[0].contentType == 'text'){
+                if(listUser.email == lastMess[0].fromEmail){
+                    listUser.lastMess = lastMess[0].content;
+                }else{
+                    listUser.lastMess = 'You: ' +lastMess[0].content;
+                }    
+            }else{
+                if(listUser.email == lastMess[0].fromEmail){
+                    let infoFromEmail = await this.getUserByEmail(lastMess[0].fromEmail);
+                    let fullName_fromEmail = infoFromEmail[0].fullName;
+                    listUser.lastMess = fullName_fromEmail+ ' sent a photo';
+                }else{
+                    listUser.lastMess = 'You sent a photo';
+                }
+            }
+        }catch(err){
+            console.log(err)
+        }
     } else {
         listUser.lastMess = '';
     }
     return listUser;
 }
+
 
 exports.updateLogOutTime = async (email) => {
     let sql = `UPDATE users SET isLogin = 0, logoutTime = Now()  WHERE email =  '${email}'`;
@@ -125,7 +144,8 @@ exports.updateLogOutTime = async (email) => {
 }
 
 exports.signup = async (account) => {
-    var sql = `INSERT INTO users(username, password, email) VALUES ("${account.username}","${account.password}","${account.email}")`;
+    let sql = `INSERT INTO users(username, password, email, avatar, logoutTime) VALUES ("${account.username}","${account.password}","${account.email}", "/image/avatar/default.jpg", "NOW() - NOW()")`;
+    
     console.log('signup: ', sql);
     try {
         const [results, field] = await db.query(sql);
@@ -134,10 +154,29 @@ exports.signup = async (account) => {
     }
 }
 
+exports.displayAccount = async () => {
+    let sql = `SELECT * FROM users WHERE email != 'admin@gmail.com'`;
+    let displayAccount;
+    try{
+        const [results, field]= await db.query(sql);
+        displayAccount = results;
+    }catch(err){
+        console.log(err);
+    }
+    return displayAccount;
+}
+
+
+
 exports.updateProfile = async (account) => {
+    let sql_withoutImage = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}' WHERE email = '${account.email}'`;
     let sql = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}', avatar = '${account.avatar}' WHERE email = '${account.email}'`;
     try {
+        if(account.avatar != null){
         const [results, field] = await db.query(sql);
+        }else{
+        const [results, field] = await db.query(sql_withoutImage);
+        }
     } catch (err) {
         console.log(err)
     }

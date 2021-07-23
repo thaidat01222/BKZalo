@@ -1,23 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React  from 'react';
+import axios from 'axios';
+import moment from 'moment';
+import { Cookies } from 'react-cookie';
+
 import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import Message from '../Message';
-import moment from 'moment';
-import { Cookies } from 'react-cookie';
-import axios from 'axios';
-import { Route } from 'react-router-dom';
-import ReactScrollableFeed from 'react-scrollable-feed';
-import { animateScroll } from "react-scroll";
+import getSocketInstance from '../../socket';
 import './MessageList.css';
 
-import getSocketInstance from '../../socket'
 const socket = getSocketInstance()
-
-// socket.on('received-message', data => {
-//   console.log(data);
-// })
-
 const cookies = new Cookies();
 
 export default class MessageList extends React.Component {
@@ -32,89 +25,97 @@ export default class MessageList extends React.Component {
 			currentUser: props.currentUser,
 			buttonSend: false,
 			messageReceive: {}
-		}
-		this.myRef = React.createRef()
+		};
+		this.myRef = React.createRef();
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		console.log('load message-list should update', this.props.loadPage)
-		if ((this.props.loadPage == true)
-			|| (this.state.buttonSend == true))
-			return true
-		else return false
+		if ((this.props.loadPage === true)
+			|| (this.state.buttonSend === true))
+			return true;
+		else return false;
 	}
 
 	shouldcomponentDidMount() {
-		if (this.props.loadPage == true) return true;
+		if (this.props.loadPage === true) return true;
 		else return false;
 	}
 
 	componentDidMount = async () => {
-		console.log('load message list did mount')
 		if (this.myRef) {
 			this.myRef.current.addEventListener('DOMNodeInserted', event => {
 				const { currentTarget: target } = event;
-				target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+				target.scroll({ DelayNode: 1000, top: target.scrollHeight, behavior: 'smooth' });
 			});
 		}
 		socket.on('received-message', message => {
-
-			console.log(message, message.fromEmail);
 			this.setState({ messageReceive: message.content })
-			if (message.fromEmail === cookies.get('currentUser')) {
-				this.props.updateMessReceive(message.content)
-				console.log('message receive true')
+			if ((message.fromEmail === cookies.get('currentUser'))
+				&& (message.contentType == 'text')) {
+				this.props.updateMessReceive(message.contentType, message.content);
+			} else if ((message.fromEmail === cookies.get('currentUser'))
+				&& (message.contentType === 'image')) {
+				this.props.updateMessReceive(message.contentType, message.image);
 			} else {
-				console.log('message receive false')
-
+				console.log('message receive false');
 			}
 		})
 	}
 
 	componentDidUpdate = () => {
-		console.log('load message list did update ')
 		this.renderMessages();
-		this.setState({ buttonSend: false })
-		console.log('temppp', this.myRef.current.scrollTop)
-
-
+		this.setState({ buttonSend: false });
 		socket.on('received-message', message => {
 			this.props.setLoadPage(true);
 		})
-
 	}
 
-	componentWillMount() {
-		console.log('load message list will mount', this.props.messages)
-	}
-
-	handleSend = async (e) => {
-		console.log('handesent', this.state.buttonSend)
-		this.setState({ buttonSend: true })
-		if (e !== '') {
-			const message = {
+	handleSend = async (text, image) => {
+		document.querySelector('.open-image').style.display = 'none';
+		this.setState({ buttonSend: true });
+		if (image !== '') {
+			let message = {
 				fromEmail: cookies.get('user'),
 				toEmail: cookies.get('currentUser'),
-				content: e,
-				contentType: 'text',
+				image: image,
+				contentType: 'image',
 				sentTime: ''
-			}
-			console.log("Client: message send: " + JSON.stringify(message));
+			};
 			await axios.post("http://localhost:8000/sendmessage", message)
 				.then(response => {
-					if (response.status === 200) { }
-					console.log('res', response)
+					if (response.status === 200) {
+
+					}
 				})
 				.catch(error => {
 					console.log(error);
 				});
-			this.props.updateMess(e)
+			this.props.updateMess('image', image);
+			this.props.setLoadPage(true);
+		}
+		else if (text !== '') {
+			let message = {
+				fromEmail: cookies.get('user'),
+				toEmail: cookies.get('currentUser'),
+				content: text,
+				contentType: 'text',
+				sentTime: ''
+			};
+			await axios.post("http://localhost:8000/sendmessage", message)
+				.then(response => {
+					if (response.status === 200) {
+
+					}
+				})
+				.catch(error => {
+					console.log(error);
+				});
+			this.props.updateMess("text", text);
 			this.props.setLoadPage(true);
 		}
 	}
 
 	renderMessages = () => {
-		console.log('render mess')
 		let i = 0;
 		let messageCount = this.props.messages.length;
 		let tempMessages = [];
@@ -124,6 +125,7 @@ export default class MessageList extends React.Component {
 			let current = this.props.messages[i];
 			let next = this.props.messages[i + 1];
 			let isMine = (current.author === this.state.user);
+			let content = current.content;
 			let currentMoment = moment(current.timestamp);
 			let prevBySameAuthor = false;
 			let nextBySameAuthor = false;
@@ -163,6 +165,7 @@ export default class MessageList extends React.Component {
 					endsSequence={endsSequence}
 					showTimestamp={showTimestamp}
 					data={current}
+					content={content}
 				/>
 			);
 
@@ -173,7 +176,6 @@ export default class MessageList extends React.Component {
 	}
 
 	render() {
-		console.log('load message list', this.state.messages)
 		return (
 			<div className="message-list">
 				<div className="toolbar">
@@ -186,10 +188,8 @@ export default class MessageList extends React.Component {
 					/>
 				</div>
 
-				<div className="message-list-container"
-					ref={this.myRef}
-				>{this.renderMessages()}
-
+				<div className="message-list-container" ref={this.myRef} >
+					{this.renderMessages()}
 				</div>
 
 				<Compose
@@ -198,7 +198,6 @@ export default class MessageList extends React.Component {
 					]}
 					loadPage={this.props.loadPage}
 					handleSend={this.handleSend}
-
 				/>
 			</div>
 		);

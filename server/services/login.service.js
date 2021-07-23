@@ -1,6 +1,8 @@
 const bodyParser = require('body-parser');
 const user_model = require('../models/users.model');
 const socket_service = require('../services/socket.service');
+const message_model = require('../models/message.model');
+const lastchat_model = require('../models/lastChat.model');
 let socketMap = require('../services/socket.service');
 let socketEmailMap = socketMap.socketEmailMap;
 
@@ -47,14 +49,30 @@ exports.signup = async (req, res) => {
     let account = {
         username : req.body.username,
         email : req.body.email,
-        password : req.body.password
+        password : req.body.password,
+        fullName : 'Your Full Name',
+        age : 'Your Age',
+        phoneNumber : 'Your Phone Number',
+        synopsis : 'Synopsis About Yourself',
+        
     }
     let check = await user_model.getUserByEmail(account.email);
     console.log(check);
     if (check.length != 0) {
         res.status(401).send("System: Tai khoan da ton tai");
     } else {
-        user_model.signup(account)
+        await user_model.signup(account);
+        await user_model.updateIsLogin(account.email);
+        // await user_model.updateProfile(account); 
+        let message = {
+            fromEmail: 'admin@gmail.com',
+            toEmail: account.email,
+            content: 'Welcome to BKZalo!!!',
+            contentType: 'text'
+        }
+        let messageID = await message_model.saveMessageToDataBase(message, 'sent');
+        lastchat_model.insertLastChat(message, messageID);
+        await socket_service.emitMessage(message);
         res.status(200).send("System: Dang ky thanh cong");
     }
 }

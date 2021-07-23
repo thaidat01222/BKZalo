@@ -8,6 +8,7 @@ class NavBar extends React.Component {
             endpoint: 'http://localhost:8000/'
         };
     }
+
     render() {
         return (
             <div className="nav-bar">
@@ -22,7 +23,8 @@ class NavBar extends React.Component {
                 <div className="nar-bar-center"></div>
                 <div className="nar-bar-right"></div>
             </div>
-        )
+        );
     }
 }
+
 export default NavBar;

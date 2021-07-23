@@ -7,7 +7,6 @@ exports.notifyHasNewSocketId = (id) => {
 exports.setEmailMapID = (socket, data) => {
     this.socketEmailMap.set(socket, data);
     // console.log('map socketID', this.socketEmailMap);
-    console.log("Socket: just sent " + data);
     socket.emit("list-online", "Socket-server: OK");
 }
 
@@ -34,7 +33,6 @@ exports.emitMessage = async (message) => {
         console.log("Socket: list user online " + socketList)
         socketList.forEach(element => {
             if (socketList.includes(element)) {
-                console.log('socketList.includes(element)');
                 element.emit('received-message', message)
             }
         });

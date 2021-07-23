@@ -86,3 +86,21 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+
+
+.message-image img{
+  width: 200px;
+  height: 200px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.message-image {
+  padding-top: 10px;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

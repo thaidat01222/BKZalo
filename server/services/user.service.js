@@ -13,16 +13,20 @@ exports.userpartner = async (req, res) => {
     var email = req.body.email;
     var currentEmail = req.body.currentEmail;
     let check = await user_model.checkIsLogin(email);
-    if (check == true) {
-        let results = await user_model.getUserPartner(currentEmail);
-        let datetime = new Date(results[0].logoutTime);
-        let dateTimeNow = new Date();
-        let time = calculateTime(dateTimeNow, datetime);
-        results[0].logoutTime = time;
-        // console.log("UserPartner: ", results);
-        res.status(200).send(results);
-    } else {
-        res.status(400).send("System: Please login to continues");
+    try {
+        if (check == true) {
+            let results = await user_model.getUserPartner(currentEmail);
+            let datetime = new Date(results[0].logoutTime);
+            let dateTimeNow = new Date();
+            let time = calculateTime(dateTimeNow, datetime);
+            results[0].logoutTime = time;
+            // console.log("UserPartner: ", results);
+            res.status(200).send(results);
+        } else {
+            res.status(400).send("System: Please login to continues");
+        }
+    } catch (err) {
+        console.log(err);
     }
 }
 
@@ -57,6 +61,7 @@ exports.listUser = async (req, res) => {
         email: '',
         fullName: '',
         avatar: '',
+        contentType: '',
         lastMess: ''
     }];
     let results = await lastchat_model.listUser(email);
@@ -107,10 +112,10 @@ function decode_base64(base64String, filename) {
     let avatarString = base64String.toString();
     let end = avatarString.indexOf(';');
     let fileType = avatarString.slice(11, end);
-    console.log('fileType',fileType);
-    let avatarDir = `/image/avatar/`+`${filename}.${fileType}`;
-    console.log('avatarDir',avatarDir);
-    fs.writeFile( path.join(__dirname,`../public`,avatarDir), base64Image, {encoding: 'base64'}, function(err) {
+    console.log('fileType', fileType);
+    let avatarDir = `/image/avatar/` + `${filename}.${fileType}`;
+    console.log('avatarDir', avatarDir);
+    fs.writeFile(path.join(__dirname, `../public`, avatarDir), base64Image, { encoding: 'base64' }, function (err) {
         console.log('File created');
     });
     return avatarDir;
@@ -128,10 +133,13 @@ exports.updateProfile = async (req, res) => {
         username: req.body.username,
         avatar: req.body.avatar
     }
-    account.avatar = decode_base64(account.avatar, account.id);
-    console.log('hihi',account.avatar);
+    // // console.log(account)
+    console.log('length',account.avatar.length);
+    if(account.avatar.length > 256){
+        account.avatar = decode_base64(account.avatar, account.id);
+    }
     let check = await user_model.checkIsLogin(account.email);
-
+    console.log(account)
     if (check == true) {
         await user_model.updateProfile(account)
         res.status(200).send("System: Update success!");

@@ -1,57 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { Cookies } from 'react-cookie';
-import axios from 'axios';
+import React from 'react';
+
 import './Compose.css';
 import getSocketInstance from '../../socket';
 import ToolbarButton from '../ToolbarButton';
-const socket = getSocketInstance()
 
-// socket.on('received-message', data =>{
-//   console.log(data);
-// })
+const socket = getSocketInstance();
 
-const cookies = new Cookies();
 export default class Compose extends React.Component {
   constructor(props) {
     super(props);
     this.handleTyping = this.handleTyping.bind(this);
+    this.handleChangeImage = this.handleChangeImage.bind(this);
     this.handleSend = this.props.handleSend;
+    this.onKeyDown = this.onKeyDown.bind(this);
     this.state = {
       typing: '',
       getMesss: '',
-      handleSend : props.handleSend
-    }
-    this.inputOpenFileRef = React.createRef()
+      contentType: '',
+      image: '',
+      handleSend: props.handleSend
+    };
+    this.inputOpenFileRef = React.createRef();
   }
 
   handleTyping = (e) => {
-    this.setState({ typing: e.target.value })
+    this.setState({ typing: e.target.value });
     e.preventDefault();
   }
 
-  showOpenFileDlg = () => {
-    this.inputOpenFileRef.current.click()
-    console.log('upload', this.inputOpenFileRef)
-}
+  handleChangeImage = (e) => {
+    e.preventDefault();
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        this.setState({ image: reader.result });
+      }
+    }
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  showOpenFile = () => {
+    this.inputOpenFileRef.current.click();
+    document.querySelector('.open-image').style.display = 'block';
+  }
+
+  onKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      if (this.state.image !== '') {
+        document.querySelector('.open-image').style.display = 'none';
+      }
+      this.handleSend(this.state.typing, this.state.image)
+      this.setState({ typing: '' });
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 
   render() {
-    console.log('load compose')
     return (
       <div className="compose">
-                <input ref={this.inputOpenFileRef} type="file" style={{ display: "none" }}/>
-                {/* <button >Open</button> */}
-                <div onClick={this.showOpenFileDlg}>
-        <ToolbarButton key="info" icon="image" /></div>
+        <input ref={this.inputOpenFileRef} type="file" style={{ display: "none" }} onChange={this.handleChangeImage} />
+        <img src={this.state.image} className="open-image" />
+        <div onClick={this.showOpenFile}>
+          <ToolbarButton key="info" icon="image" />
+        </div>
         <input
           type="text"
           className="compose-input"
           placeholder="Aa"
           value={this.state.typing}
           onChange={this.handleTyping}
+          onKeyDown={this.onKeyDown}
         />
-        <button onClick={() => {this.handleSend(this.state.typing); this.setState({ typing: ''})}}>
+        <button onClick={() => {
+          this.handleSend(this.state.typing, this.state.image);
+          this.setState({ typing: '' });
+          this.setState({ image: '' })
+        }}>
           <ToolbarButton key="info" icon="send2" />
-          </button>
+        </button>
       </div>
     );
   }

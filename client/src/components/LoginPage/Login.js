@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { useCookies, Cookies, CookiesProvider } from 'react-cookie';
-import { Redirect } from 'react-router-dom';
-import './login.scss';
+import React from 'react';
 import axios from 'axios';
+import { Cookies } from 'react-cookie';
+import { Redirect } from 'react-router-dom';
 
-// import SocketIOClient from '../socket';
-// const socket = SocketIOClient();
-// import socket from '../socket';
-// const sock = new socket;
+import './login.scss';
+
 const cookies = new Cookies();
+
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -17,44 +15,40 @@ export default class Login extends React.Component {
         this.handleUsernameChanges = this.handleUsernameChanges.bind(this);
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
         this.handleSubmitSignup = this.handleSubmitSignup.bind(this);
+
         this.state = {
             typingE: '',
             typingP: '',
             email: cookies.get('user'),
-            password: cookies.get('pass'),
+            password: '',
             username: '',
             redirect: false,
             button: false,
             isLogin: cookies.get('isLogin')
-        }
-
+        };
     }
 
 
     shouldComponentUpdate(nextState) {
-        console.log("shouldComponentUpdate", (this.state.redirect !== false))
-        if ((this.state.button === true) || (this.state.redirect === true)) return true;
+        if ((this.state.button === true) || (this.state.redirect === true))
+            return true;
         else if ((nextState.typingE !== this.state.typingE) || (nextState.typingP !== this.state.typingP))
             return false;
-
     }
 
     componentDidMount = async () => {
-        console.log("did mount");
-        this.checkAuth(this.state.isLogin)
-        console.log('state', this.state.email, this.state.password)
+        this.checkAuth(this.state.isLogin);
     }
 
     getMess = async (e) => {
-        console.log('add curent')
-        const user = {
+        let user = {
             email: e
-        }
+        };
         await axios.post('http://localhost:8000/listuser', user)
             .then(response => {
                 cookies.set('currentUser', response.data[0].email);
                 cookies.set('currentUserFullname', response.data[0].fullName);
-                cookies.set('avt', 'http://localhost:8000' + response.data[0].avatar)
+                cookies.set('avt', 'http://localhost:8000' + response.data[0].avatar);
             })
             .catch(error => {
                 console.log(error)
@@ -63,24 +57,21 @@ export default class Login extends React.Component {
 
     login = async (user, pass) => {
         var auth = 0;
-        const account_login = {
+        let account_login = {
             email: user,
             password: pass
-        }            
+        };
         await this.getMess(user)
         await axios.post("http://localhost:8000/login", account_login)
             .then(response => {
                 if (response.status === 200) {
-                    // const socket = io('http://localhost:8000'); 
-                    console.log("Client: Da Login Vao Socket");
                     auth = 1;
                     this.setState({ redirect: true })
                     this.setState({ isLogin: true })
                     cookies.set('isLogin', true, { path: '/' });
-                    // sock.emit("list-online",this.state.email);
                 }
                 if (response.status === 401) {
-                    alert("Client: Sai thong tin");
+                    // alert("Client: Sai thong tin");
                     auth = 0;
                     console.log("401")
                 }
@@ -91,85 +82,77 @@ export default class Login extends React.Component {
 
     }
 
-
     checkAuth = async (islogin) => {
-        console.log('checkAuth')
-        console.log("islogin", (islogin == "true"))
-        if (islogin == "true") {
-            this.setState({ redirect: true })
-            console.log("redirec in check auth", this.state.redirect)
+        if (islogin === "true") {
+            this.setState({ redirect: true });
         }
     }
 
     handleEmailChanges(e) {
-        this.setState({ typingE: e.target.value })
+        this.setState({ typingE: e.target.value });
     }
 
     handlePasswordChanges(e) {
-        this.setState({ typingP: e.target.value })
+        this.setState({ typingP: e.target.value });
     }
 
     handleUsernameChanges(e) {
-        this.setState({ username: e.target.value })
+        this.setState({ username: e.target.value });
     }
 
     handleSubmitLogin(e) {
         e.preventDefault();
         this.setState({ email: this.state.typingE });
-        this.setState({ password: this.state.typingP })
-        this.setState({ button: true })
+        this.setState({ password: this.state.typingP });
+        this.setState({ button: true });
         cookies.set('user', this.state.typingE);
-        cookies.set('pass', this.state.typingP);
-        this.getMess(this.state.typingE)
+        this.getMess(this.state.typingE);
         this.login(this.state.typingE, this.state.typingP);
     }
     handleSubmitSignup(e) {
         e.preventDefault();
-        const account_signup = {
+        let account_signup = {
             username: this.state.username,
             email: this.state.typingE,
             password: this.state.typingP
-        }
-        console.log("Client: Data Sent: " + JSON.stringify(account_signup));
+        };
         axios.post('http://localhost:8000/signup', account_signup)
             .then(response => {
-                if (response.status == 401) {
-                    alert("Client: Tai khoan da ton tai");
-                    console.log("Client: Tai khoan da ton tai");
+                console.log(response)
+                if (response.status === 401) {
+                    alert("Account already exists!");
                 }
-                if (response.status == 200) {
-                    alert("Client: Da dang ky thanh cong");
-                    console.log(response);
+                if (response.status === 200) {
+                    alert("You have successfully registered!");
                     this.setState({ redirect: true });
                     cookies.set('user', this.state.typingE, { path: '/' });
-                    cookies.set('pass', this.state.typingP, { path: '/' });
                     cookies.set('isLogin', true, { path: '/' });
                 }
             })
             .catch(error => {
                 console.log(error);
+                alert("Account already exists!");
             });
-        this.setState({ button: true })
+        this.setState({ button: true });
     }
 
     onSignIn = () => {
-        const signInButton = document.getElementById('signIn');
-        const container = document.getElementById('container');
+        let container = document.getElementById('container');
         container.classList.remove("right-panel-active");
     }
 
     onSignUp = () => {
-        const signUpButton = document.getElementById('signUp');
-        const container = document.getElementById('container');
+        let container = document.getElementById('container');
         container.classList.add("right-panel-active");
     }
 
 
     render() {
         this.checkAuth(this.state.isLogin);
-        console.log("state in render", this.state)
         if ((this.state.redirect === true) || (this.state.isLogin === "true")) {
-            return (<Redirect to='/chat' />)
+            return (
+                <Redirect to='/chat' />
+            )
         } else return (
             <div className="login-page">
                 <div class="container" id="container">
@@ -206,8 +189,6 @@ export default class Login extends React.Component {
                     </div>
                 </div>
             </div>
-
-        )
+        );
     }
 }
-

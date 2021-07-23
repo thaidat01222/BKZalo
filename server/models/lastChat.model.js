@@ -17,7 +17,6 @@ exports.checkLastChatIsExist = async (emailA, emailB)=>{
     console.log('checkLastChatExist: ',sql);
     try{
         const [results, field] = await db.query(sql);
-        console.log('aaaaaaaaaa',results.length);
         if(results.length != 0 ) {
             check = true;
         }else{

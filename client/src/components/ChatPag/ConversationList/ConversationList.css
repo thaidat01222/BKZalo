@@ -8,6 +8,51 @@
   background-color: #eeeef1;
 }
 
+.add-chat {
+  display: none;
+  position: relative;
+  width: 100%;
+}
+
+.list-add{
+  position: absolute;
+  height: calc(100vh - 139px);
+  width: calc(100% - 2px);  
+
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  
+}
+.list-add:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(177, 177, 177);
+}
+  
+.list-add:hover::-webkit-scrollbar {
+  width: 7px;
+  background-color: rgba(235, 235, 235, 0);
+  border-radius: 8px;
+} 
+  
+.list-add::-webkit-scrollbar {
+  width: 7px;
+  background-color: rgba(245, 222, 179, 0);
+  border-radius: 8px;
+}
+  
+.list-add::-webkit-scrollbar-thumb {    
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 5px;
+} 
+
+.list-add-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.list-add-item:hover {
+  background-color: #eeeef1;
+}
+
 .conversation-list-items{
   position: absolute;
   height: calc(100vh - 139px);
@@ -37,3 +82,33 @@
       background-color: rgba(255, 255, 255, 0);
       border-radius: 5px;
   } 
+
+
+  .new-chat-input {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-input-new-chat {
+    background: #f4f4f8;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+  }
+  
+  .form-input-new-chat:focus {
+    outline: none;
+    
+  }
+  
+  .form-input-new-chat::placeholder {
+    text-align: center;
+  }
+  
+
+  .button-new-chat {
+    padding: 0;
+    height: 20px;
+  }
