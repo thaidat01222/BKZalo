@@ -4,7 +4,6 @@ const login_service = require('../services/login.service');
 const user_service = require('../services/user.service');
 const message_model = require('../models/message.model');
 const message_service = require('../services/message.service');
-const admin_service = require('../services/admin.service');
 
 
 exports.registerEndpoint = (app) => {
@@ -33,13 +32,5 @@ exports.registerEndpoint = (app) => {
     app.post('/newchat', user_service.newChat);
 
     app.post('/imageshared', message_service.imageShared);
-
-    app.post('/admincreate', admin_service.createAccount);
-
-    app.post('/adminupdate', admin_service.updateAccount);
-
-    app.post('/admindelete', admin_service.deleteAccount);
-    
-    app.post('/admindisplay', admin_service.displayAccount);
 }
 

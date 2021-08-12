@@ -97,7 +97,8 @@
 }
 
 .message-image {
-  padding-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   width: 200px;
   height: 200px;
   display: flex;

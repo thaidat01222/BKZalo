@@ -2,8 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import { Cookies } from 'react-cookie';
 import { Redirect } from 'react-router-dom';
-
 import './login.scss';
+import getServerHost from '../serverHost';
+const serverHost = getServerHost();
 
 const cookies = new Cookies();
 
@@ -44,11 +45,11 @@ export default class Login extends React.Component {
         let user = {
             email: e
         };
-        await axios.post('http://localhost:8000/listuser', user)
+        await axios.post(serverHost+'/listuser', user)
             .then(response => {
                 cookies.set('currentUser', response.data[0].email);
                 cookies.set('currentUserFullname', response.data[0].fullName);
-                cookies.set('avt', 'http://localhost:8000' + response.data[0].avatar);
+                cookies.set('avt', serverHost + response.data[0].avatar);
             })
             .catch(error => {
                 console.log(error)
@@ -62,7 +63,7 @@ export default class Login extends React.Component {
             password: pass
         };
         await this.getMess(user)
-        await axios.post("http://localhost:8000/login", account_login)
+        await axios.post(serverHost+"/login", account_login)
             .then(response => {
                 if (response.status === 200) {
                     auth = 1;
@@ -116,7 +117,7 @@ export default class Login extends React.Component {
             email: this.state.typingE,
             password: this.state.typingP
         };
-        axios.post('http://localhost:8000/signup', account_signup)
+        axios.post(serverHost+'/signup', account_signup)
             .then(response => {
                 console.log(response)
                 if (response.status === 401) {

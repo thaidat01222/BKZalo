@@ -50,12 +50,13 @@ exports.signup = async (req, res) => {
         username : req.body.username,
         email : req.body.email,
         password : req.body.password,
-        fullName : 'Your Full Name',
+        fullName : '',
         age : 'Your Age',
         phoneNumber : 'Your Phone Number',
         synopsis : 'Synopsis About Yourself',
         
     }
+    account.fullName = account.username;
     let check = await user_model.getUserByEmail(account.email);
     console.log(check);
     if (check.length != 0) {

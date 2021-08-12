@@ -50,6 +50,7 @@ export default class Compose extends React.Component {
         document.querySelector('.open-image').style.display = 'none';
       }
       this.handleSend(this.state.typing, this.state.image)
+      this.setState({ image: ''})
       this.setState({ typing: '' });
       event.preventDefault();
       event.stopPropagation();

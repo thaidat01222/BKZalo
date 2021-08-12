@@ -9,6 +9,9 @@ import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import './ConversationList.css';
 
+import getServerHost from '../../serverHost';
+const serverHost = getServerHost();
+
 const cookies = new Cookies();
 
 export default function ConversationList(props) {
@@ -29,11 +32,11 @@ export default function ConversationList(props) {
 		var user = {
 			email: cookies.get('user')
 		};
-		await axios.post('http://localhost:8000/listuser', user)
+		await axios.post(serverHost+'/listuser', user)
 			.then(response => {
 				let newConversations = response.data.map(result => {
 					return {
-						photo: 'http://localhost:8000' + result.avatar,
+						photo: serverHost + result.avatar,
 						name: result.fullName,
 						text: result.lastMess,
 						email: result.email

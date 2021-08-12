@@ -5,8 +5,12 @@ import { Redirect } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Link } from "react-router-dom";
 
+
 import Messenger from '../Messenger';
 import getSocketInstance from '../../socket';
+
+import getServerHost from '../../serverHost';
+const serverHost = getServerHost();
 
 const cookies = new Cookies();
 const socket = getSocketInstance()
@@ -49,7 +53,7 @@ export default class Chat extends React.Component {
     const account_login = {
       email: user
     };
-    await axios.post("http://localhost:8000/checklogin", account_login)
+    await axios.post(serverHost+"/checklogin", account_login)
       .then(response => {
         if (response.status === 200) {
           auth = 1;
@@ -69,7 +73,7 @@ export default class Chat extends React.Component {
       email: this.state.email
     };
 
-    await axios.post("http://localhost:8000/user", user)
+    await axios.post(serverHost+"/user", user)
       .then(response => {
         this.setState({ profile: response.data[0] });
       })
@@ -82,7 +86,7 @@ export default class Chat extends React.Component {
     const account_logout = {
       email: this.state.email
     };
-    await axios.post('http://localhost:8000/logout', account_logout)
+    await axios.post(serverHost+'/logout', account_logout)
       .then(response => {
       })
 
@@ -108,7 +112,7 @@ export default class Chat extends React.Component {
         return (
           <div className="chat-page">
             <Link to='/user' className="user-avt" >
-              <img src={`http://localhost:8000${this.state.profile.avatar}`} />
+              <img src={serverHost+`${this.state.profile.avatar}`} />
             </Link>
             <button className="button-logout" onClick={this.onLogout}>
               <img src='./logout.svg' /></button>

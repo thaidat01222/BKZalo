@@ -8,6 +8,9 @@ import InforUserChat from '../InforUserChat';
 import ToolbarButton from '../ToolbarButton';
 import './Messenger.scss';
 
+import getServerHost from '../../serverHost';
+const serverHost = getServerHost();
+
 export default class Messenger extends React.Component {
 	constructor(props) {
 		super(props);
@@ -56,7 +59,7 @@ export default class Messenger extends React.Component {
 		const e = {
 			email: this.state.user
 		}
-		await axios.post('http://localhost:8000/newchat', e)
+		await axios.post(serverHost+'/newchat', e)
 			.then(response => {
 				let temp = response.data.map((result) => {
 					return {
@@ -112,7 +115,7 @@ export default class Messenger extends React.Component {
 				id: this.state.index,
 				content: "image",
 				author: this.props.currentUser,
-				message: 'http://localhost:8000/' + message,
+				message: serverHost+'/' + message,
 				timestamp: now()
 			};
 			preMess.push(me);
@@ -127,7 +130,7 @@ export default class Messenger extends React.Component {
 			toEmail: user2
 		};
 		await this.setState({ messages: [] });
-		await axios.post('http://localhost:8000/historymessage', user)
+		await axios.post(serverHost+'/historymessage', user)
 			.then(response => {
 				let mess = response.data;
 				let tempMessages = mess.map((result, index) => {
@@ -143,7 +146,7 @@ export default class Messenger extends React.Component {
 						id: index,
 						content: "image",
 						author: result.fromEmail,
-						message: "http://localhost:8000" + result.image,
+						message: serverHost + result.image,
 						timestamp: result.sentTime
 					}
 				});

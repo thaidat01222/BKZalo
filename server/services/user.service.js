@@ -130,7 +130,6 @@ exports.updateProfile = async (req, res) => {
         synopsis: req.body.synopsis,
         age: req.body.age,
         phoneNumber: req.body.phoneNumber,
-        username: req.body.username,
         avatar: req.body.avatar
     }
     // // console.log(account)

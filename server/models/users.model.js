@@ -54,7 +54,7 @@ exports.checkIsLogin = async (email) => {
 };
 
 exports.getUserPartner = async (email) => {
-    let sql = `SELECT (avatar),(email),(fullName),(logoutTime) FROM users WHERE email = '${email}'`;
+    let sql = `SELECT (avatar),(email),(fullName),(logoutTime),(synopsis),(phoneNumber) FROM users WHERE email = '${email}'`;
     console.log('getUserPartner: ', sql)
     try {
         const [results, field] = await db.query(sql);
@@ -144,7 +144,7 @@ exports.updateLogOutTime = async (email) => {
 }
 
 exports.signup = async (account) => {
-    let sql = `INSERT INTO users(username, password, email, avatar, logoutTime) VALUES ("${account.username}","${account.password}","${account.email}", "/image/avatar/default.jpg", "NOW() - NOW()")`;
+    let sql = `INSERT INTO users(username, fullName, password, email, avatar, logoutTime) VALUES ("${account.username}","${account.fullName}","${account.password}","${account.email}", "/image/avatar/default.jpg", "NOW() - NOW()")`;
     
     console.log('signup: ', sql);
     try {
@@ -169,8 +169,8 @@ exports.displayAccount = async () => {
 
 
 exports.updateProfile = async (account) => {
-    let sql_withoutImage = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}' WHERE email = '${account.email}'`;
-    let sql = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', username = '${account.username}', avatar = '${account.avatar}' WHERE email = '${account.email}'`;
+    let sql_withoutImage = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}' WHERE email = '${account.email}'`;
+    let sql = `UPDATE users SET fullName = '${account.fullName}', synopsis = '${account.synopsis}',age = '${account.age}', phoneNumber = '${account.phoneNumber}', avatar = '${account.avatar}' WHERE email = '${account.email}'`;
     try {
         if(account.avatar != null){
         const [results, field] = await db.query(sql);

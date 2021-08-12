@@ -1,11 +1,14 @@
 import React from 'react';
 import './navbar.css';
 
+import getServerHost from '../serverHost';
+const serverHost = getServerHost();
+
 class NavBar extends React.Component {
     constructor() {
         super();
         this.state = {
-            endpoint: 'http://localhost:8000/'
+            endpoint: serverHost+'/'
         };
     }
 

@@ -4,6 +4,9 @@ import { Cookies } from 'react-cookie';
 
 import './infor.scss';
 
+import getServerHost from '../../serverHost';
+const serverHost = getServerHost();
+console.log(serverHost);
 const cookies = new Cookies();
 
 export default function InforUserChat(props) {
@@ -17,14 +20,19 @@ export default function InforUserChat(props) {
         getFileShare();
     }, [currentUser])
 
+    useEffect(() => {
+        getFileShare();
+    }, [loadPage])
+
     const getUserProfile = async () => {
         var getUser = {
             email: cookies.get('user'),
             currentEmail: cookies.get('currentUser')
         };
-        await axios.post("http://localhost:8000/userpartner", getUser)
+        await axios.post(serverHost+"/userpartner", getUser)
             .then(response => {
                 let newData = response.data[0];
+                console.log('profile user', newData)
                 setProfile(newData)
             })
             .catch(error => {
@@ -38,7 +46,7 @@ export default function InforUserChat(props) {
             toEmail: cookies.get('currentUser')
         };
 
-        await axios.post("http://localhost:8000/imageshared", getFile)
+        await axios.post(serverHost+"/imageshared", getFile)
             .then(response => {
                 let newData = response.data;
                 setFileShare(newData);
@@ -53,7 +61,7 @@ export default function InforUserChat(props) {
             <div className="user-profil">
                 <dic className="user-infor">
                     <div className="proflie-avt">
-                        <img src={`http://localhost:8000${profile.avatar}`} />
+                        <img src={serverHost+`${profile.avatar}`} />
                     </div>
                     <h3 className="profile-user-name">
                         {profile.fullName}
@@ -64,20 +72,13 @@ export default function InforUserChat(props) {
                 </dic>
                 <div className="setting-chat">
                     <div className="set-c mute-conversation">
-                        <img src='./noti-chat.svg' />
-                        Mute conversation
+                        <i>{profile.email}</i>
                     </div>
                     <div className="set-c ignore">
-                        <img src='./stop.svg' />
-                        Ignore message
+                       <i>{profile.phoneNumber}</i>
                     </div>
                     <div className="set-c block">
-                        <img src='./block.svg' />
-                        Block
-                    </div>
-                    <div className="set-c report">
-                        <img src='./warning.svg' />
-                        Something's wrong
+                        <i> {profile.synopsis}</i>
                     </div>
                 </div>
                 <div className="file-shared">
@@ -86,7 +87,7 @@ export default function InforUserChat(props) {
                         {fileShare.map(file => {
                             return (
                                 <div className="file-share">
-                                    <img className="image-share" src={`http://localhost:8000${file.image}`} />
+                                    <img className="image-share" src={serverHost+`${file.image}`} />
                                 </div>
                             )
                         })}

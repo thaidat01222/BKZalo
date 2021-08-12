@@ -10,6 +10,9 @@ import Message from '../Message';
 import getSocketInstance from '../../socket';
 import './MessageList.css';
 
+import getServerHost from '../../serverHost';
+const serverHost = getServerHost();
+
 const socket = getSocketInstance()
 const cookies = new Cookies();
 
@@ -81,7 +84,7 @@ export default class MessageList extends React.Component {
 				contentType: 'image',
 				sentTime: ''
 			};
-			await axios.post("http://localhost:8000/sendmessage", message)
+			await axios.post(serverHost+"/sendmessage", message)
 				.then(response => {
 					if (response.status === 200) {
 
@@ -101,7 +104,7 @@ export default class MessageList extends React.Component {
 				contentType: 'text',
 				sentTime: ''
 			};
-			await axios.post("http://localhost:8000/sendmessage", message)
+			await axios.post(serverHost+"/sendmessage", message)
 				.then(response => {
 					if (response.status === 200) {
 
