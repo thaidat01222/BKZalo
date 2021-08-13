@@ -22,10 +22,11 @@ export default class InputNewChat extends React.Component {
 
     }
 
-    handleClick = async (user, fullname) => {
+    handleClick = async (user, fullname, avt) => {
         await this.setState({ input: '' });
         cookies.set('currentUser', user);
         cookies.set('currentUserFullname', user);
+        cookies.set('avt', 'http://localhost:8000'+ avt);
         await this.getMessages(cookies.get('user'), user);
         await this.setCurrentUser(user);
 
@@ -36,6 +37,7 @@ export default class InputNewChat extends React.Component {
 
 
     render() {
+        console.log('zzzzzzzz', this.props.newChat)
         const plus = this.state.input.toUpperCase();
         return (
             <div className="add-chat">
@@ -51,7 +53,7 @@ export default class InputNewChat extends React.Component {
                         if ((value.email.toUpperCase().indexOf(plus) > -1)
                             && (plus !== '')) {
                             return (
-                                <div className="list-add-item" onClick={e => this.handleClick(value.email)} >
+                                <div className="list-add-item" onClick={e => this.handleClick(value.email, value.fullname, value.avatar)} >
                                     {value.email}
                                 </div>
                             )

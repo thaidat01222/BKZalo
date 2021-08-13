@@ -64,7 +64,8 @@ export default class Messenger extends React.Component {
 				let temp = response.data.map((result) => {
 					return {
 						email: result.email,
-						fullName: result.fullName
+						fullName: result.fullName,
+						avatar: result.avatar
 					};
 				});
 				this.setState({ newChat: temp });

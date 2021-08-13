@@ -1,8 +1,8 @@
 const db = require('./database');
 const message_model = require('./message.model');
 
-exports.getAllEMail = async () =>{
-    let sql = `SELECT (email), (fullName) FROM users WHERE 1 = 1`;
+exports.getAllEMail = async (email) =>{
+    let sql = `SELECT (email), (fullName),(avatar) FROM users WHERE email <> '${email}'`;
     console.log('getAllEMail ', sql);
     try{
         const [results, field] = await db.query(sql);

@@ -131,7 +131,7 @@ export default class UserProfile extends React.Component {
             console.log('test 2', profileEdit)
             await axios.post("http://localhost:8000/updateprofile", profileEdit)
                 .then(response => {
-                    this.setState({ button: !this.state.button})
+                    this.setState({ button: !this.state.button}) 
                     alert('You have successfully updated your information!')
                 })
                 .catch(error => {
